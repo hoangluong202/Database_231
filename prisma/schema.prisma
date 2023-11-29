@@ -12,7 +12,214 @@ datasource db {
 }
 
 model User {
-  id       String @id @default(cuid())
-  email    String @unique @db.VarChar(50)
-  password String
+  id         Int         @id @default(autoincrement())
+  email      String      @unique @db.VarChar(50)
+  password   String      @db.VarChar(255)
+  firstName  String      @db.VarChar(50)
+  lastName   String      @db.VarChar(50)
+  avatarUrl  String      @db.VarChar(255)
+  student    Student?
+  instructor Instructor?
+}
+
+model Student {
+  userId                    Int                         @id
+  user                      User                        @relation(fields: [userId], references: [id])
+  target                    String                      @db.VarChar(255)
+  orders                    Order[]
+  StudentStudyLecture       StudentStudyLecture[]
+  StudentReviewCourse       StudentReviewCourse[]
+  StudentRegisterFreeCourse StudentRegisterFreeCourse[]
+}
+
+model Instructor {
+  userId            Int      @id
+  user              User     @relation(fields: [userId], references: [id])
+  bankAccountNumber String   @unique @db.VarChar(20)
+  position          String   @db.VarChar(100)
+  courses           Course[]
+}
+
+model Course {
+  id                        Int                         @id @default(autoincrement())
+  name                      String                      @db.VarChar(100)
+  description               String                      @db.VarChar(255)
+  courseLabel               CourseLabel
+  audienceLabel             AudienceLabel
+  createdAt                 DateTime                    @default(now())
+  updatedAt                 DateTime                    @updatedAt
+  totalDuration             Int
+  totalSections             Int
+  instructor                Instructor                  @relation(fields: [instructorId], references: [userId])
+  instructorId              Int
+  certificate               Certificate?
+  freeCourse                FreeCourse?
+  paidCourse                PaidCourse?
+  sections                  Section[]
+  categories                Category[]
+  StudentReviewCourse       StudentReviewCourse[]
+  StudentRegisterFreeCourse StudentRegisterFreeCourse[]
+}
+
+model Certificate {
+  id             Int      @id @default(autoincrement())
+  content        String   @db.Text()
+  expirationDate DateTime
+  course         Course   @relation(fields: [courseId], references: [id])
+  courseId       Int      @unique
+}
+
+model FreeCourse {
+  course      Course @relation(fields: [courseId], references: [id])
+  courseId    Int    @id
+  sponsorName String @db.VarChar(100)
+}
+
+model PaidCourse {
+  course             Course       @relation(fields: [courseId], references: [id])
+  courseId           Int          @id
+  priceOriginal      Int
+  priceDiscounted    Int
+  discountPercentage Int
+  promoEndDate       DateTime
+  parentCourse       PaidCourse?  @relation("PrerequiredCourse", fields: [parentId], references: [courseId])
+  parentId           Int?
+  childCourses       PaidCourse[] @relation("PrerequiredCourse")
+}
+
+model Section {
+  id                  Int       @id @default(autoincrement())
+  name                String    @db.VarChar(100)
+  totalCompletionTime Int
+  totalLectures       Int
+  course              Course    @relation(fields: [courseId], references: [id])
+  courseId            Int
+  lectures            Lecture[]
+}
+
+model Lecture {
+  id                  Int                   @id @default(autoincrement())
+  name                String                @db.VarChar(100)
+  description         String                @db.VarChar(255)
+  duration            Int
+  section             Section               @relation(fields: [sectionId], references: [id])
+  sectionId           Int
+  material            Material?
+  quiz                Quiz?
+  StudentStudyLecture StudentStudyLecture[]
+}
+
+model Material {
+  lecture   Lecture @relation(fields: [lectureId], references: [id])
+  lectureId Int     @id
+  name      String  @db.VarChar(100)
+  url       String  @db.VarChar(255)
+}
+
+model Quiz {
+  lecture        Lecture    @relation(fields: [lectureId], references: [id])
+  lectureId      Int        @id
+  totalQuestions Int
+  questions      Question[]
+}
+
+model Question {
+  id            Int          @id @default(autoincrement())
+  content       String       @db.Text()
+  correctOption AnswerOption
+  quiz          Quiz         @relation(fields: [quizId], references: [lectureId])
+  quizId        Int
+  Answer        Answer[]
+}
+
+model Order {
+  id            Int           @id @default(autoincrement())
+  totalCost     Int
+  paymentMethod PaymentMethod
+  student       Student       @relation(fields: [studentId], references: [userId])
+  studentId     Int
+}
+
+model Category {
+  name        String @db.VarChar(100)
+  content     String @db.Text()
+  description String @db.VarChar(255)
+  courses     Course @relation(fields: [courseId], references: [id])
+  courseId    Int
+
+  @@id([name, courseId])
+}
+
+model StudentStudyLecture {
+  student   Student @relation(fields: [studentId], references: [userId])
+  studentId Int
+  lecture   Lecture @relation(fields: [lectureId], references: [id])
+  lectureId Int
+
+  @@id([studentId, lectureId])
+}
+
+model StudentReviewCourse {
+  student   Student  @relation(fields: [studentId], references: [userId])
+  studentId Int
+  course    Course   @relation(fields: [courseId], references: [id])
+  courseId  Int
+  rating    Rating
+  content   String   @db.Text()
+  createAt  DateTime @default(now())
+
+  @@id([studentId, courseId])
+}
+
+model StudentRegisterFreeCourse {
+  student   Student @relation(fields: [studentId], references: [userId])
+  studentId Int
+  course    Course  @relation(fields: [courseId], references: [id])
+  courseId  Int
+
+  @@id([studentId, courseId])
+}
+
+model Answer {
+  question     Question     @relation(fields: [questionId], references: [id])
+  questionId   Int
+  answerOption AnswerOption
+  content      String       @db.Text()
+  explanation  String       @db.Text()
+
+  @@id([questionId, answerOption])
+}
+
+enum CourseLabel {
+  MATH
+}
+
+enum AudienceLabel {
+  ELEMENTARY
+}
+
+enum MaterialType {
+  VIDEO
+  TEXT
+  AUDIO
+}
+
+enum AnswerOption {
+  A
+  B
+  C
+  D
+}
+
+enum PaymentMethod {
+  BANK_TRANSFER
+  CASH
+}
+
+enum Rating {
+  ONE
+  TWO
+  THREE
+  FOUR
+  FIVE
 }
