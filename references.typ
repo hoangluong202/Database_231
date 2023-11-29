@@ -1,1 +1,0 @@
-#align(center, text(15pt)[*Tài liệu tham khảo*])
