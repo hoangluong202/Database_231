@@ -1,5 +1,26 @@
-# Fastify Template
+# Start App
+0. Install
+  0.1 VSCode + Extension Prettier
+  0.2 Node >=18
+  0.3 Yarn
+  0.4 Docker
+  0.5 Docker compose
+1. Clone Repo from github
+  ```
+  git clone https://github.com/hoangluong202/Database_231.git
+  ```
+2. Create .env from .env.example
+3. Start app
+  ```
+  yarn bootstrap: setup dev environment
+  yarn start: start app
+  ```
+4. Other script
+  ```
+  yarn db:drop: drop all table
+  ```
 
+# Other
 [![formatter: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier) [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/) ![CI](https://github.com/phucvinh57/fastify-template/actions/workflows/ci.yml/badge.svg) ![Deploy](https://github.com/phucvinh57/fastify-template/actions/workflows/release.yml/badge.svg)
 
 Using [fastify](https://www.fastify.io), this template includes:
