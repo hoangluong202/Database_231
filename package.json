@@ -24,7 +24,8 @@
     "clean:git": "git branch --merged >/tmp/merged-branches && nano /tmp/merged-branches && xargs git branch -D </tmp/merged-branches && git fetch --prune --all",
     "db:init": "ts-node postgres/init.ts",
     "db:drop" : "ts-node postgres/drop.ts",
-    "db:seed": "ts-node postgres/seed.ts"
+    "db:seed": "ts-node postgres/seed.ts",
+    "db:prisma:seed": "ts-node prisma/seed.ts"
   },
   "dependencies": {
     "@fastify/cookie": "^9.0.4",

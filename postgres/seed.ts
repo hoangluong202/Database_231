@@ -42,7 +42,7 @@ async function seed() {
     //         return;
     //     }
     // }
-
+    //const text = `SELECT id, email, lastName", "public"."User"."firstName" FROM "public"."User" WHERE "public"."User"."email" = $1 LIMIT $2 OFFSET $3`
     const res = await pool.query({
         text: 'SELECT id, email, password FROM users WHERE email = $1',
         values: ['hluong@gmail.com']
