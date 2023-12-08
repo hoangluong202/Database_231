@@ -24,7 +24,7 @@ model User {
 
 model Student {
   userId                    Int                         @id
-  user                      User                        @relation(fields: [userId], references: [id])
+  user                      User                        @relation(fields: [userId], references: [id], onDelete: Cascade)
   target                    String                      @db.VarChar(255)
   orders                    Order[]
   StudentStudyLecture       StudentStudyLecture[]
@@ -34,7 +34,7 @@ model Student {
 
 model Instructor {
   userId            Int      @id
-  user              User     @relation(fields: [userId], references: [id])
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   bankAccountNumber String   @unique @db.VarChar(20)
   position          String   @db.VarChar(100)
   courses           Course[]
@@ -43,14 +43,14 @@ model Instructor {
 model Course {
   id                        Int                         @id @default(autoincrement())
   name                      String                      @db.VarChar(100)
-  description               String                      @db.VarChar(255)
+  description               String?                     @db.VarChar(255)
   courseLabel               CourseLabel
   audienceLabel             AudienceLabel
   createdAt                 DateTime                    @default(now())
   updatedAt                 DateTime                    @updatedAt
-  totalDuration             Int
-  totalSections             Int
-  instructor                Instructor                  @relation(fields: [instructorId], references: [userId])
+  totalDuration             Int                         @default(0)
+  totalSections             Int                         @default(0)
+  instructor                Instructor                  @relation(fields: [instructorId], references: [userId], onDelete: Cascade)
   instructorId              Int
   certificate               Certificate?
   freeCourse                FreeCourse?
@@ -65,23 +65,23 @@ model Certificate {
   id             Int      @id @default(autoincrement())
   content        String   @db.Text()
   expirationDate DateTime
-  course         Course   @relation(fields: [courseId], references: [id])
+  course         Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
   courseId       Int      @unique
 }
 
 model FreeCourse {
-  course      Course @relation(fields: [courseId], references: [id])
+  course      Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
   courseId    Int    @id
   sponsorName String @db.VarChar(100)
 }
 
 model PaidCourse {
-  course             Course       @relation(fields: [courseId], references: [id])
+  course             Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
   courseId           Int          @id
   priceOriginal      Int
   priceDiscounted    Int
   discountPercentage Int
-  promoEndDate       DateTime
+  promoEndDate       DateTime?
   parentCourse       PaidCourse?  @relation("PrerequiredCourse", fields: [parentId], references: [courseId])
   parentId           Int?
   childCourses       PaidCourse[] @relation("PrerequiredCourse")
@@ -92,7 +92,7 @@ model Section {
   name                String    @db.VarChar(100)
   totalCompletionTime Int
   totalLectures       Int
-  course              Course    @relation(fields: [courseId], references: [id])
+  course              Course    @relation(fields: [courseId], references: [id], onDelete: Cascade)
   courseId            Int
   lectures            Lecture[]
 }
@@ -100,9 +100,9 @@ model Section {
 model Lecture {
   id                  Int                   @id @default(autoincrement())
   name                String                @db.VarChar(100)
-  description         String                @db.VarChar(255)
+  description         String?               @db.VarChar(255)
   duration            Int
-  section             Section               @relation(fields: [sectionId], references: [id])
+  section             Section               @relation(fields: [sectionId], references: [id], onDelete: Cascade)
   sectionId           Int
   material            Material?
   quiz                Quiz?
@@ -110,14 +110,14 @@ model Lecture {
 }
 
 model Material {
-  lecture   Lecture @relation(fields: [lectureId], references: [id])
+  lecture   Lecture @relation(fields: [lectureId], references: [id], onDelete: Cascade)
   lectureId Int     @id
   name      String  @db.VarChar(100)
   url       String  @db.VarChar(255)
 }
 
 model Quiz {
-  lecture        Lecture    @relation(fields: [lectureId], references: [id])
+  lecture        Lecture    @relation(fields: [lectureId], references: [id], onDelete: Cascade)
   lectureId      Int        @id
   totalQuestions Int
   questions      Question[]
@@ -127,7 +127,7 @@ model Question {
   id            Int          @id @default(autoincrement())
   content       String       @db.Text()
   correctOption AnswerOption
-  quiz          Quiz         @relation(fields: [quizId], references: [lectureId])
+  quiz          Quiz         @relation(fields: [quizId], references: [lectureId], onDelete: Cascade)
   quizId        Int
   Answer        Answer[]
 }
@@ -136,7 +136,7 @@ model Order {
   id            Int           @id @default(autoincrement())
   totalCost     Int
   paymentMethod PaymentMethod
-  student       Student       @relation(fields: [studentId], references: [userId])
+  student       Student       @relation(fields: [studentId], references: [userId], onDelete: Cascade)
   studentId     Int
 }
 
@@ -144,25 +144,25 @@ model Category {
   name        String @db.VarChar(100)
   content     String @db.Text()
   description String @db.VarChar(255)
-  courses     Course @relation(fields: [courseId], references: [id])
+  courses     Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
   courseId    Int
 
   @@id([name, courseId])
 }
 
 model StudentStudyLecture {
-  student   Student @relation(fields: [studentId], references: [userId])
+  student   Student @relation(fields: [studentId], references: [userId], onDelete: Cascade)
   studentId Int
-  lecture   Lecture @relation(fields: [lectureId], references: [id])
+  lecture   Lecture @relation(fields: [lectureId], references: [id], onDelete: Cascade)
   lectureId Int
 
   @@id([studentId, lectureId])
 }
 
 model StudentReviewCourse {
-  student   Student  @relation(fields: [studentId], references: [userId])
+  student   Student  @relation(fields: [studentId], references: [userId], onDelete: Cascade)
   studentId Int
-  course    Course   @relation(fields: [courseId], references: [id])
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
   courseId  Int
   rating    Rating
   content   String   @db.Text()
@@ -172,16 +172,16 @@ model StudentReviewCourse {
 }
 
 model StudentRegisterFreeCourse {
-  student   Student @relation(fields: [studentId], references: [userId])
+  student   Student @relation(fields: [studentId], references: [userId], onDelete: Cascade)
   studentId Int
-  course    Course  @relation(fields: [courseId], references: [id])
+  course    Course  @relation(fields: [courseId], references: [id], onDelete: Cascade)
   courseId  Int
 
   @@id([studentId, courseId])
 }
 
 model Answer {
-  question     Question     @relation(fields: [questionId], references: [id])
+  question     Question     @relation(fields: [questionId], references: [id], onDelete: Cascade)
   questionId   Int
   answerOption AnswerOption
   content      String       @db.Text()
@@ -191,17 +191,23 @@ model Answer {
 }
 
 enum CourseLabel {
-  MATH
+  Bestseller
+  HotAndNew
+  New
+  HighestRated
 }
 
 enum AudienceLabel {
-  ELEMENTARY
+  Beginner
+  Intermediate
+  Expert
+  AllLevels
 }
 
 enum MaterialType {
-  VIDEO
-  TEXT
-  AUDIO
+  Video
+  Text
+  Audio
 }
 
 enum AnswerOption {
@@ -212,14 +218,14 @@ enum AnswerOption {
 }
 
 enum PaymentMethod {
-  BANK_TRANSFER
-  CASH
+  BankTransfer
+  Cash
 }
 
 enum Rating {
-  ONE
-  TWO
-  THREE
-  FOUR
-  FIVE
+  One
+  Two
+  Three
+  Four
+  Five
 }

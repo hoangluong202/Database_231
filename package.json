@@ -25,7 +25,8 @@
     "db:init": "ts-node postgres/init.ts",
     "db:drop" : "ts-node postgres/drop.ts",
     "db:seed": "ts-node postgres/seed.ts",
-    "db:prisma:seed": "ts-node prisma/seed.ts"
+    "db:prisma:seed": "ts-node prisma/seed.ts",
+    "db:trigger" : "ts-node postgres/createTrigger.ts"
   },
   "dependencies": {
     "@fastify/cookie": "^9.0.4",
