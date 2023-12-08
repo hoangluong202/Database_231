@@ -76,15 +76,16 @@ model FreeCourse {
 }
 
 model PaidCourse {
-  course             Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  courseId           Int          @id
+  course             Course            @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  courseId           Int               @id
   priceOriginal      Int
   priceDiscounted    Int
   discountPercentage Int
   promoEndDate       DateTime?
-  parentCourse       PaidCourse?  @relation("PrerequiredCourse", fields: [parentId], references: [courseId])
+  parentCourse       PaidCourse?       @relation("PrerequiredCourse", fields: [parentId], references: [courseId])
   parentId           Int?
-  childCourses       PaidCourse[] @relation("PrerequiredCourse")
+  childCourses       PaidCourse[]      @relation("PrerequiredCourse")
+  orders             PaidCourseOrder[]
 }
 
 model Section {
@@ -133,11 +134,12 @@ model Question {
 }
 
 model Order {
-  id            Int           @id @default(autoincrement())
+  id            Int               @id @default(autoincrement())
   totalCost     Int
   paymentMethod PaymentMethod
-  student       Student       @relation(fields: [studentId], references: [userId], onDelete: Cascade)
+  student       Student           @relation(fields: [studentId], references: [userId], onDelete: Cascade)
   studentId     Int
+  paidCourse    PaidCourseOrder[]
 }
 
 model Category {
@@ -178,6 +180,15 @@ model StudentRegisterFreeCourse {
   courseId  Int
 
   @@id([studentId, courseId])
+}
+
+model PaidCourseOrder {
+  paidCourse   PaidCourse @relation(fields: [paidCourseId], references: [courseId], onDelete: Cascade)
+  paidCourseId Int
+  order        Order      @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderId      Int
+
+  @@id([paidCourseId, orderId])
 }
 
 model Answer {
