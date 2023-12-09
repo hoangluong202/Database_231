@@ -371,7 +371,7 @@ async function generateSampleData() {
         },
         {
             studentId: luong.id,
-            courseId: paidCourseSqlId.id,
+            courseId: paidCoursePostgresDBAId.id,
             rating: 4,
             content: 'This course is not bat'
         }
