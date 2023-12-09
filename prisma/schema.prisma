@@ -27,7 +27,6 @@ model Student {
   user                      User                        @relation(fields: [userId], references: [id], onDelete: Cascade)
   target                    String                      @db.VarChar(255)
   orders                    Order[]
-  StudentStudyLecture       StudentStudyLecture[]
   StudentReviewCourse       StudentReviewCourse[]
   StudentRegisterFreeCourse StudentRegisterFreeCourse[]
 }
@@ -107,12 +106,12 @@ model Lecture {
   sectionId           Int
   material            Material?
   quiz                Quiz?
-  StudentStudyLecture StudentStudyLecture[]
 }
 
 model Material {
   lecture   Lecture @relation(fields: [lectureId], references: [id], onDelete: Cascade)
   lectureId Int     @id
+  type      MaterialType
   name      String  @db.VarChar(100)
   url       String  @db.VarChar(255)
 }
@@ -130,7 +129,7 @@ model Question {
   correctOption AnswerOption
   quiz          Quiz         @relation(fields: [quizId], references: [lectureId], onDelete: Cascade)
   quizId        Int
-  Answer        Answer[]
+  answer        Answer[]
 }
 
 model Order {
@@ -152,21 +151,12 @@ model Category {
   @@id([name, courseId])
 }
 
-model StudentStudyLecture {
-  student   Student @relation(fields: [studentId], references: [userId], onDelete: Cascade)
-  studentId Int
-  lecture   Lecture @relation(fields: [lectureId], references: [id], onDelete: Cascade)
-  lectureId Int
-
-  @@id([studentId, lectureId])
-}
-
 model StudentReviewCourse {
   student   Student  @relation(fields: [studentId], references: [userId], onDelete: Cascade)
   studentId Int
   course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
   courseId  Int
-  rating    Rating
+  rating    Int
   content   String   @db.Text()
   createAt  DateTime @default(now())
 
@@ -196,6 +186,7 @@ model Answer {
   questionId   Int
   answerOption AnswerOption
   content      String       @db.Text()
+  isCorrect    Boolean
   explanation  String       @db.Text()
 
   @@id([questionId, answerOption])
@@ -218,7 +209,6 @@ enum AudienceLabel {
 enum MaterialType {
   Video
   Text
-  Audio
 }
 
 enum AnswerOption {
@@ -233,10 +223,3 @@ enum PaymentMethod {
   Cash
 }
 
-enum Rating {
-  One
-  Two
-  Three
-  Four
-  Five
-}

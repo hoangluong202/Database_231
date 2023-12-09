@@ -5,16 +5,13 @@ CREATE TYPE "CourseLabel" AS ENUM ('Bestseller', 'HotAndNew', 'New', 'HighestRat
 CREATE TYPE "AudienceLabel" AS ENUM ('Beginner', 'Intermediate', 'Expert', 'AllLevels');
 
 -- CreateEnum
-CREATE TYPE "MaterialType" AS ENUM ('Video', 'Text', 'Audio');
+CREATE TYPE "MaterialType" AS ENUM ('Video', 'Text');
 
 -- CreateEnum
 CREATE TYPE "AnswerOption" AS ENUM ('A', 'B', 'C', 'D');
 
 -- CreateEnum
 CREATE TYPE "PaymentMethod" AS ENUM ('BankTransfer', 'Cash');
-
--- CreateEnum
-CREATE TYPE "Rating" AS ENUM ('One', 'Two', 'Three', 'Four', 'Five');
 
 -- CreateTable
 CREATE TABLE "User" (
@@ -116,6 +113,7 @@ CREATE TABLE "Lecture" (
 -- CreateTable
 CREATE TABLE "Material" (
     "lectureId" INTEGER NOT NULL,
+    "type" "MaterialType" NOT NULL,
     "name" VARCHAR(100) NOT NULL,
     "url" VARCHAR(255) NOT NULL,
 
@@ -161,18 +159,10 @@ CREATE TABLE "Category" (
 );
 
 -- CreateTable
-CREATE TABLE "StudentStudyLecture" (
-    "studentId" INTEGER NOT NULL,
-    "lectureId" INTEGER NOT NULL,
-
-    CONSTRAINT "StudentStudyLecture_pkey" PRIMARY KEY ("studentId","lectureId")
-);
-
--- CreateTable
 CREATE TABLE "StudentReviewCourse" (
     "studentId" INTEGER NOT NULL,
     "courseId" INTEGER NOT NULL,
-    "rating" "Rating" NOT NULL,
+    "rating" INTEGER NOT NULL,
     "content" TEXT NOT NULL,
     "createAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -200,6 +190,7 @@ CREATE TABLE "Answer" (
     "questionId" INTEGER NOT NULL,
     "answerOption" "AnswerOption" NOT NULL,
     "content" TEXT NOT NULL,
+    "isCorrect" BOOLEAN NOT NULL,
     "explanation" TEXT NOT NULL,
 
     CONSTRAINT "Answer_pkey" PRIMARY KEY ("questionId","answerOption")
@@ -255,12 +246,6 @@ ALTER TABLE "Order" ADD CONSTRAINT "Order_studentId_fkey" FOREIGN KEY ("studentI
 
 -- AddForeignKey
 ALTER TABLE "Category" ADD CONSTRAINT "Category_courseId_fkey" FOREIGN KEY ("courseId") REFERENCES "Course"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "StudentStudyLecture" ADD CONSTRAINT "StudentStudyLecture_studentId_fkey" FOREIGN KEY ("studentId") REFERENCES "Student"("userId") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "StudentStudyLecture" ADD CONSTRAINT "StudentStudyLecture_lectureId_fkey" FOREIGN KEY ("lectureId") REFERENCES "Lecture"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "StudentReviewCourse" ADD CONSTRAINT "StudentReviewCourse_studentId_fkey" FOREIGN KEY ("studentId") REFERENCES "Student"("userId") ON DELETE CASCADE ON UPDATE CASCADE;

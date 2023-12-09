@@ -113,7 +113,7 @@ async function createTrigger() {
     BEGIN
       UPDATE "Quiz"
       SET "totalQuestions" = (SELECT COUNT(*) FROM "Question" WHERE "quizId" = NEW."quizId")
-      WHERE id = NEW."quizId";
+      WHERE "lectureId" = NEW."quizId";
       RETURN NEW;
     END;
     $$ LANGUAGE plpgsql;
@@ -147,6 +147,25 @@ async function createTrigger() {
       AFTER INSERT OR UPDATE OR DELETE ON "PaidCourseOrder"
       FOR EACH ROW
       EXECUTE FUNCTION update_total_cost();
+    `);
+
+    //create trigger to update correct answer of question
+    await pool.query(`
+    CREATE OR REPLACE FUNCTION update_correct_answer()
+    RETURNS TRIGGER AS $$
+    BEGIN
+      UPDATE "Question"
+      SET "correctOption" = (SELECT "answerOption" FROM "Answer" WHERE "questionId" = NEW."questionId" AND "isCorrect" = TRUE LIMIT 1)
+      WHERE id = NEW."questionId";
+      RETURN NEW;
+    END;
+    $$ LANGUAGE plpgsql;
+    `);
+    await pool.query(`
+      CREATE OR REPLACE TRIGGER correct_answer_update
+      AFTER INSERT OR UPDATE OR DELETE ON "Answer"
+      FOR EACH ROW
+      EXECUTE FUNCTION update_correct_answer();
     `);
 }
 createTrigger();
