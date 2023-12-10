@@ -28,7 +28,8 @@
     "db:prisma:seed": "ts-node prisma/seed.ts",
     "db:trigger": "ts-node postgres/createTrigger.ts",
     "db:insertReview": "ts-node postgres/IUD_procedure/insertReview.ts",
-    "db:updateReview": "ts-node postgres/IUD_procedure/updateReview.ts"
+    "db:updateReview": "ts-node postgres/IUD_procedure/updateReview.ts",
+    "db:deleteReview": "ts-node postgres/IUD_procedure/deleteReview.ts"
   },
   "dependencies": {
     "@fastify/cookie": "^9.0.4",
