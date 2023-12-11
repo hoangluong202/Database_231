@@ -139,6 +139,7 @@ model Order {
   student       Student           @relation(fields: [studentId], references: [userId], onDelete: Cascade)
   studentId     Int
   paidCourse    PaidCourseOrder[]
+  createdAt     DateTime          @default(now())
 }
 
 model Category {

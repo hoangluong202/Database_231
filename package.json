@@ -27,6 +27,7 @@
     "db:seed": "ts-node postgres/seed.ts",
     "db:prisma:seed": "ts-node prisma/seed.ts",
     "db:trigger": "ts-node postgres/createTrigger.ts",
+    "db:124" : "ts-node postgres/addFunction.ts",
     "db:insertReview": "ts-node postgres/IUD_procedure/insertReview.ts",
     "db:updateReview": "ts-node postgres/IUD_procedure/updateReview.ts",
     "db:deleteReview": "ts-node postgres/IUD_procedure/deleteReview.ts"
