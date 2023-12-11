@@ -28,7 +28,9 @@
     "db:prisma:seed": "ts-node prisma/seed.ts",
     "db:trigger": "ts-node postgres/createTrigger.ts",
     "db:crudReview": "ts-node postgres/procedure/crudReview.ts",
-    "db:topCourse": "ts-node postgres/procedure/getTopCourse.ts"
+    "db:topCourse": "ts-node postgres/procedure/getTopCourse.ts",
+    "db:1.2.4.1": "ts-node postgres/1.2.4/highestRatingCourseFunc.ts",
+    "db:1.2.4.2": "ts-node postgres/1.2.4/paidCourseRevenueFuc.ts"
   },
   "dependencies": {
     "@fastify/cookie": "^9.0.4",
