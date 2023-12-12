@@ -25,6 +25,7 @@
     "db:prisma:seed": "ts-node prisma/seed.ts",
     "db:crudReview": "ts-node postgres/procedure/crudReview.ts",
     "db:topCourse": "ts-node postgres/procedure/getTopCourse.ts",
+    "db:filterAndSortCourse": "ts-node postgres/procedure/filterAndSortCourse.ts",
     "db:createTable" : "ts-node postgres/1.1.1/createTable.ts",
     "db:dropTable": "ts-node postgres/1.1.1/dropTable.ts",
     "db:createTrigger": "ts-node postgres/1.2.2/createTrigger.ts",
