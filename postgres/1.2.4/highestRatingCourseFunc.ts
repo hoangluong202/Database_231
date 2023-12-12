@@ -53,7 +53,7 @@ async function highestRatingCourseFunc() {
     `,
         [audienceLabel]
     );
-    console.log('Result of highest rating course:\n', res1.rows);
+    console.log('Result of highest rating course:\n', res1.rows[0]);
     process.exit(0);
 }
 highestRatingCourseFunc();
