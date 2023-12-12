@@ -144,6 +144,7 @@ CREATE TABLE "Order" (
     "totalCost" INTEGER NOT NULL,
     "paymentMethod" "PaymentMethod" NOT NULL,
     "studentId" INTEGER NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Order_pkey" PRIMARY KEY ("id")
 );
