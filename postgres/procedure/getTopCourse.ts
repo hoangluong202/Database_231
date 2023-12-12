@@ -8,7 +8,6 @@ async function getTopCourse() {
             name VARCHAR(100),
             courseLabel "CourseLabel",
             audienceLabel "AudienceLabel",
-            createdAt TIMESTAMP(3),
             updatedAt TIMESTAMP(3),
             totalDuration INTEGER,
             sponsorName VARCHAR(100),
@@ -17,11 +16,11 @@ async function getTopCourse() {
         ) AS $$
         BEGIN
             IF p_instructor_id IS NULL THEN
-                RAISE EXCEPTION 'Giáo viên không được để trống';
+                RAISE EXCEPTION 'Giáo viên không được để trống !';
             END IF;
 
             IF NOT EXISTS (SELECT 1 FROM "Instructor" WHERE "userId" = p_instructor_id) THEN
-                RAISE EXCEPTION 'Giáo viên không tồn tại';
+                RAISE EXCEPTION 'Giáo viên không tồn tại !';
             END IF;
 
             RETURN QUERY
@@ -29,7 +28,6 @@ async function getTopCourse() {
                 c."name",
                 c."courseLabel",
                 c."audienceLabel",
-                c."createdAt",
                 c."updatedAt",
                 c."totalDuration",
                 CASE
@@ -52,7 +50,6 @@ async function getTopCourse() {
                 c."name",
                 c."courseLabel",
                 c."audienceLabel",
-                c."createdAt",
                 c."updatedAt",
                 c."totalDuration",
                 sponsorName,

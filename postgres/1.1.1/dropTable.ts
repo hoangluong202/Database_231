@@ -1,4 +1,5 @@
-import { Pool } from 'pg';
+import * as pg from 'pg';
+const { Pool } = pg;
 const pool = new Pool({ connectionString: 'postgresql://postgres:password@localhost:5432/postgres' });
 
 async function dropTable() {
