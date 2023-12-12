@@ -6,8 +6,7 @@
         "./web_ui/interfaces",
         "./web_ui/layouts",
         "./web_ui/pages",
-        "./web_ui/services",
-        "./web_ui/states"
+        "./web_ui/services"
     ],
     "exclude": [
         "__mock__",

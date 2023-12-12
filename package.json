@@ -3,7 +3,7 @@
   "version": "",
   "license": "ISC",
   "description": "",
-  "type": "module",
+  "type": "commonjs",
   "scripts": {
     "build": "tsc --project tsconfig.compile.json && tsc-alias",
     "barrels": "barrelsby --config .barrelsby.json -q",
@@ -17,7 +17,7 @@
     "lint:fix": "eslint '**/*.{ts,js}' --fix",
     "format": "prettier '**/*.{tsx,ts,js,json,md,yml,yaml}' --write",
     "prepare": "is-ci || husky install",
-    "bootstrap": "yarn start:docker && yarn && yarn db:init",
+    "bootstrap": "yarn start:docker && yarn && yarn db:reset",
     "start:docker": "docker compose -f docker-compose.dev.yml up -d",
     "clean:docker": "docker compose -f docker-compose.dev.yml down --volumes --remove-orphans",
     "clean:git": "git branch --merged >/tmp/merged-branches && nano /tmp/merged-branches && xargs git branch -D </tmp/merged-branches && git fetch --prune --all",
