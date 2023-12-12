@@ -29,6 +29,8 @@
     "db:trigger": "ts-node postgres/createTrigger.ts",
     "db:crudReview": "ts-node postgres/procedure/crudReview.ts",
     "db:topCourse": "ts-node postgres/procedure/getTopCourse.ts",
+    "db:createTable" : "ts-node postgres/1.1.1/createTable.ts",
+    "db:dropTable": "ts-node postgres/1.1.1/dropTable.ts",
     "db:1.2.4.1": "ts-node postgres/1.2.4/highestRatingCourseFunc.ts",
     "db:1.2.4.2": "ts-node postgres/1.2.4/paidCourseRevenueFuc.ts"
   },
