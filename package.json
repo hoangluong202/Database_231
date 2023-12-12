@@ -3,7 +3,7 @@
   "version": "",
   "license": "ISC",
   "description": "",
-  "type": "commonjs",
+  "type": "module",
   "scripts": {
     "build": "tsc --project tsconfig.compile.json && tsc-alias",
     "barrels": "barrelsby --config .barrelsby.json -q",
@@ -75,11 +75,12 @@
     "ts-node-dev": "^2.0.0",
     "tsc-alias": "^1.8.7",
     "tsconfig-paths": "^4.2.0",
+    "tsx": "^4.6.2",
     "typescript": "^5.1.6",
     "vite": "^5.0.7",
     "vite-tsconfig-paths": "^4.2.2"
   },
   "prisma": {
-    "seed": "ts-node prisma/seed.ts"
+    "seed": "tsx prisma/seed.ts"
   }
 }

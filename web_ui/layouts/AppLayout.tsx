@@ -1,23 +1,28 @@
+import { AppNavigation } from '@components';
 import { useMemo } from 'react';
 import { Routes, Route } from 'react-router-dom';
-import { AppNavigation } from '@components';
 
-export const AppLayout: Component<{ menu: RouteMenu }> = ({ menu }) => {
+export const AppLayout: Component<{ menu: RouteMenu }> = function ({ menu }) {
     const routeItems = useMemo(() => {
         const items: { path: string; element: React.ReactElement }[] = [];
-
         for (const menuItem of menu) {
             if (menuItem === 'divider' || menuItem.type === 'logout-btn') continue;
-            items.push({ path: menuItem.path, element: menuItem.element });
+            if (menuItem.type === 'list') {
+                for (const route of menuItem.routes) {
+                    items.push({ path: route.path, element: route.element });
+                }
+            } else {
+                items.push({ path: menuItem.path, element: menuItem.element });
+            }
         }
-
         return items;
     }, [menu]);
 
     return (
-        <div className='flex flex-col h-screen sm:min-h-screen'>
+        <div>
             <AppNavigation menu={menu} />
-            <div className='flex-1 h-screen overflow-y-scroll bg-gray-200'>
+
+            <div className='p-4' style={{ marginLeft: '256px' }}>
                 <Routes>
                     {routeItems.map((item) => (
                         <Route path={item.path} element={item.element} key={item.path} />
