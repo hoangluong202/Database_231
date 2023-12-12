@@ -35,7 +35,7 @@ CREATE TABLE "Course" (
     "courseLabel" "CourseLabel" NOT NULL,
     "audienceLabel" "AudienceLabel" NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "totalDuration" INTEGER NOT NULL DEFAULT 0,
     "totalSections" INTEGER NOT NULL DEFAULT 0,
     "instructorId" INTEGER NOT NULL,

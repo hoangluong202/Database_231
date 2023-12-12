@@ -3,7 +3,7 @@
   "version": "",
   "license": "ISC",
   "description": "",
-  "type": "module",
+  "type": "commonjs",
   "scripts": {
     "build": "tsc --project tsconfig.compile.json && tsc-alias",
     "barrels": "barrelsby --config .barrelsby.json -q",
@@ -17,7 +17,8 @@
     "lint:fix": "eslint '**/*.{ts,js}' --fix",
     "format": "prettier '**/*.{tsx,ts,js,json,md,yml,yaml}' --write",
     "prepare": "is-ci || husky install",
-    "bootstrap": "yarn start:docker && yarn && yarn db:reset",
+    "bootstrap": "yarn start:docker && yarn",
+    "start:db": "yarn db:dropTable && yarn db:createTable && yarn db:createTrigger && yarn db:seedData",
     "start:docker": "docker compose -f docker-compose.dev.yml up -d",
     "clean:docker": "docker compose -f docker-compose.dev.yml down --volumes --remove-orphans",
     "clean:git": "git branch --merged >/tmp/merged-branches && nano /tmp/merged-branches && xargs git branch -D </tmp/merged-branches && git fetch --prune --all",
@@ -28,6 +29,7 @@
     "db:createTable": "ts-node postgres/1.1.1/createTable.ts",
     "db:dropTable": "ts-node postgres/1.1.1/dropTable.ts",
     "db:createTrigger": "ts-node postgres/1.2.2/createTrigger.ts",
+    "db:seedData": "ts-node postgres/1.1.2/seedData.ts",
     "db:1.2.4.1": "ts-node postgres/1.2.4/highestRatingCourseFunc.ts",
     "db:1.2.4.2": "ts-node postgres/1.2.4/paidCourseRevenueFuc.ts"
   },
@@ -49,6 +51,7 @@
     "zustand": "^4.4.7"
   },
   "devDependencies": {
+    "@faker-js/faker": "^8.3.1",
     "@types/bcrypt": "^5.0.0",
     "@types/node": "^20.4.8",
     "@types/pg": "^8.10.9",
@@ -75,12 +78,11 @@
     "ts-node-dev": "^2.0.0",
     "tsc-alias": "^1.8.7",
     "tsconfig-paths": "^4.2.0",
-    "tsx": "^4.6.2",
     "typescript": "^5.1.6",
     "vite": "^5.0.7",
     "vite-tsconfig-paths": "^4.2.2"
   },
   "prisma": {
-    "seed": "tsx prisma/seed.ts"
+    "seed": "ts-node prisma/seed.ts"
   }
 }

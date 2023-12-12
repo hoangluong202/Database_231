@@ -1,4 +1,5 @@
-import { Pool } from 'pg';
+import * as pg from 'pg';
+const { Pool } = pg;
 const pool = new Pool({ connectionString: 'postgresql://postgres:password@localhost:5432/postgres' });
 
 async function dropTable() {
@@ -27,5 +28,7 @@ async function dropTable() {
     await pool.query(`DROP TYPE IF EXISTS "MaterialType"`);
     await pool.query(`DROP TYPE IF EXISTS "AnswerOption"`);
     await pool.query(`DROP TYPE IF EXISTS "PaymentMethod"`);
+
+    process.exit(0);
 }
 dropTable();
