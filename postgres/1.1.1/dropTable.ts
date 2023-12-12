@@ -27,5 +27,7 @@ async function dropTable() {
     await pool.query(`DROP TYPE IF EXISTS "MaterialType"`);
     await pool.query(`DROP TYPE IF EXISTS "AnswerOption"`);
     await pool.query(`DROP TYPE IF EXISTS "PaymentMethod"`);
+
+    process.exit(0);
 }
 dropTable();

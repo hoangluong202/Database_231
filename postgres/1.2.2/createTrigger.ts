@@ -229,5 +229,7 @@ async function createTrigger() {
     DELETE ON "Section"
     FOR EACH ROW EXECUTE FUNCTION update_total_course_duration();
     `);
+
+    process.exit(0);
 }
 createTrigger();

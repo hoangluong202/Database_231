@@ -39,7 +39,7 @@ async function createTable() {
         "courseLabel" "CourseLabel" NOT NULL,
         "audienceLabel" "AudienceLabel" NOT NULL,
         "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        "updatedAt" TIMESTAMP(3) NOT NULL,
+        "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
         "totalDuration" INTEGER NOT NULL DEFAULT 0,
         "totalSections" INTEGER NOT NULL DEFAULT 0,
         "instructorId" INTEGER NOT NULL,
@@ -203,9 +203,6 @@ async function createTable() {
         `ALTER TABLE "PaidCourseOrder" ADD CONSTRAINT "PaidCourseOrder_orderId_fkey" FOREIGN KEY ("orderId") REFERENCES "Order"("id")`
     );
     await pool.query(`ALTER TABLE "Answer" ADD CONSTRAINT "Answer_questionId_fkey" FOREIGN KEY ("questionId") REFERENCES "Question"("id")`);
-
-    //create index
-    await pool.query(`CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
-    `);
+    process.exit(0);
 }
 createTable();

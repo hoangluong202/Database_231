@@ -18,16 +18,18 @@
     "lint:fix": "eslint '**/*.{ts,js}' --fix",
     "format": "prettier '**/*.{ts,js,json}' --write",
     "prepare": "is-ci || husky install",
-    "bootstrap": "yarn start:docker && yarn && yarn db:init",
+    "bootstrap": "yarn start:docker && yarn",
+    "start:db": "yarn db:dropTable && yarn db:createTable && yarn db:createTrigger && yarn db:seedData",
     "start:docker": "docker compose -f docker-compose.dev.yml up -d",
     "clean:docker": "docker compose -f docker-compose.dev.yml down --volumes --remove-orphans",
     "clean:git": "git branch --merged >/tmp/merged-branches && nano /tmp/merged-branches && xargs git branch -D </tmp/merged-branches && git fetch --prune --all",
     "db:prisma:seed": "ts-node prisma/seed.ts",
     "db:crudReview": "ts-node postgres/procedure/crudReview.ts",
     "db:topCourse": "ts-node postgres/procedure/getTopCourse.ts",
-    "db:createTable" : "ts-node postgres/1.1.1/createTable.ts",
+    "db:createTable": "ts-node postgres/1.1.1/createTable.ts",
     "db:dropTable": "ts-node postgres/1.1.1/dropTable.ts",
     "db:createTrigger": "ts-node postgres/1.2.2/createTrigger.ts",
+    "db:seedData":"ts-node postgres/1.1.2/seedData.ts",
     "db:1.2.4.1": "ts-node postgres/1.2.4/highestRatingCourseFunc.ts",
     "db:1.2.4.2": "ts-node postgres/1.2.4/paidCourseRevenueFuc.ts"
   },
@@ -52,6 +54,7 @@
     "prisma": "^5.1.1"
   },
   "devDependencies": {
+    "@faker-js/faker": "^8.3.1",
     "@types/bcrypt": "^5.0.0",
     "@types/jest": "^29.5.3",
     "@types/jsonwebtoken": "^9.0.2",
