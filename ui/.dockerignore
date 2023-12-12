@@ -1,6 +1,0 @@
-node_modules
-Dockerfile
-.env.example
-.git
-.husky
-.github
