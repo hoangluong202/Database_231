@@ -1,9 +1,0 @@
-version: '3.8'
-
-services:
-  tick3d-fe:
-    image: ghcr.io/ngyngcphu/elearning-system:latest
-    ports:
-      - 4000:4000
-    container_name: elearning-system
-    restart: always

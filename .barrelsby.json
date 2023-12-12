@@ -1,15 +1,17 @@
 {
     "directory": [
-        "./src/handlers",
-        "./src/constants",
-        "./src/dtos/in",
-        "./src/dtos/out",
-        "./src/configs",
-        "./src/hooks",
-        "./src/interfaces",
-        "./src/repositories",
-        "./src/utils"
+        "./web_ui/components",
+        "./web_ui/constants",
+        "./web_ui/hooks",
+        "./web_ui/interfaces",
+        "./web_ui/layouts",
+        "./web_ui/pages",
+        "./web_ui/services"
     ],
-    "exclude": ["__mock__", "__mocks__", ".spec.ts"],
+    "exclude": [
+        "__mock__",
+        "__mocks__",
+        ".spec.ts"
+    ],
     "delete": true
 }
