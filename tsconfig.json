@@ -3,7 +3,7 @@
         "baseUrl": ".",
         "sourceRoot": "web_ui",
         "outDir": "dist",
-        "module": "CommonJS",
+        "module": "ESNext",
         "target": "ESNext",
         "sourceMap": true,
         "useDefineForClassFields": true,
