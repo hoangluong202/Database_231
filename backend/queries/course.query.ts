@@ -1,10 +1,9 @@
-import { CourseDto } from '@be/dtos/out';
+import { CourseDto, CourseTopDto } from '@be/dtos/out';
 import { logger, poolQuery } from '@be/utils';
 import { faker } from '@faker-js/faker';
 
 const getCoursesByStudentId = async (studentId: number): Promise<CourseDto[]> => {
     try {
-        //add column check is course is review by student
         const queryText = `
         SELECT c."id" AS "courseId",
               c.name,
@@ -33,10 +32,20 @@ const getCoursesByStudentId = async (studentId: number): Promise<CourseDto[]> =>
         });
         return rows;
     } catch (err) {
-        logger.error('Error when retrieving user data by Sdt');
         logger.error(err);
         throw err;
     }
 };
 
-export const courseQuery = { getCoursesByStudentId };
+const getTopCourses = async (instructorId: number): Promise<CourseTopDto[]> => {
+    try {
+        const queryText = `SELECT * FROM get_top_course($1);`;
+        const { rows } = await poolQuery({ text: queryText, values: [instructorId] });
+        return rows;
+    } catch (err) {
+        logger.error(err);
+        throw err;
+    }
+};
+
+export const courseQuery = { getCoursesByStudentId, getTopCourses };
