@@ -4,15 +4,18 @@ import { faker } from '@faker-js/faker';
 
 const getCoursesByStudentId = async (studentId: number): Promise<CourseDto[]> => {
     try {
+        //add column check is course is review by student
         const queryText = `
         SELECT c."id" AS "courseId",
               c.name,
               pc."priceDiscounted" AS price,
               fc."sponsorName" AS sponsor,
-              c.description
+              c.description,
+              CASE WHEN src."courseId" IS NOT NULL THEN true ELSE false END AS "isReviewed"
         FROM "Course" c
         LEFT JOIN "FreeCourse" fc ON c."id" = fc."courseId"
         LEFT JOIN "PaidCourse" pc ON c."id" = pc."courseId"
+        LEFT JOIN "StudentReviewCourse" src ON c."id" = src."courseId"
         WHERE c."id" IN
             (SELECT srfc."courseId" AS id
             FROM "Student" s

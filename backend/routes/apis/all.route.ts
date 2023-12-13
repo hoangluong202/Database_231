@@ -8,7 +8,7 @@ import { DeleteReviewDto, InsertReviewDto } from '@be/dtos/in';
 export const userPlugin = createRoutes('All', [
     {
         method: 'GET',
-        url: '/review/:studentId',
+        url: '/reviews/:studentId',
         schema: {
             response: {
                 200: Type.Array(ReviewResultDto)
@@ -57,6 +57,6 @@ export const userPlugin = createRoutes('All', [
                 200: OkDto
             }
         },
-        handler: reviewHandler.updateReview as RouteHandlerMethod
+        handler: reviewHandler.deleteReview as RouteHandlerMethod
     }
 ]);

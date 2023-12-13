@@ -39,7 +39,7 @@ const updateReview = async (reviewData: InsertReviewDto): Promise<boolean> => {
 const deleteReview = async (reviewData: DeleteReviewDto): Promise<boolean> => {
     try {
         const { studentId, courseId } = reviewData;
-        const queryText = `CALL delete_review($1, $2, $3, $4)`;
+        const queryText = `CALL delete_review($1, $2)`;
         await poolQuery({ text: queryText, values: [studentId, courseId] });
         return true;
     } catch (err) {
