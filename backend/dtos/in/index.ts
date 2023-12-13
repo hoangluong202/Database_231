@@ -4,6 +4,7 @@
 
 export * from './auth.dto';
 export * from './delete-review.dto';
+export * from './filter-search-course.dto';
 export * from './insert-review.dto';
 export * from './instructor-id.dto';
 export * from './review.dto';

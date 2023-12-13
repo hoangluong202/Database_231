@@ -3,7 +3,7 @@ import { ReviewResultDto, CourseDto, OkDto, CourseTopDto } from '@be/dtos/out';
 import { reviewHandler, userHandler } from '@be/handlers';
 import { createRoutes } from '@be/utils';
 import { RouteHandlerMethod } from 'fastify';
-import { InsertReviewDto } from '@be/dtos/in';
+import { FilterSearchCourseDto, InsertReviewDto } from '@be/dtos/in';
 
 export const userPlugin = createRoutes('All', [
     {
@@ -67,5 +67,16 @@ export const userPlugin = createRoutes('All', [
             }
         },
         handler: userHandler.getTopCourse as RouteHandlerMethod
+    },
+    {
+        method: 'POST',
+        url: '/instructors/:instructorId/courses/filter',
+        schema: {
+            body: FilterSearchCourseDto,
+            response: {
+                200: Type.Array(CourseTopDto)
+            }
+        },
+        handler: userHandler.filterAndSortCourse as RouteHandlerMethod
     }
 ]);
