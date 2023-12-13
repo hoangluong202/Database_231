@@ -1,4 +1,4 @@
-import { InstructorIdDto, StudentIdDto } from '@be/dtos/in';
+import { FilterSearchCourseDto, InstructorIdDto, StudentIdDto } from '@be/dtos/in';
 import { CourseDto, CourseTopDto } from '@be/dtos/out';
 import { Handler } from '@be/interfaces';
 import { courseQuery } from '@be/queries';
@@ -20,13 +20,25 @@ const getTopCourse: Handler<CourseTopDto[], { Params: InstructorIdDto }> = async
     } catch (err) {
         return res.internalServerError('Không tìm thấy khóa học nào !');
     }
-    // const instructorId = req.params.instructorId;
-    // const courses = await courseQuery.getTopCourses(instructorId);
-    // console.log(courses);
-    // return res.status(200).send(courses);
+};
+
+const filterAndSortCourse: Handler<CourseTopDto[], { Params: InstructorIdDto; Querystring: FilterSearchCourseDto }> = async (req, res) => {
+    try {
+        const instructorId = req.params.instructorId;
+        const queryFilterAndSort = req.query;
+        console.log('Begin BUG');
+        console.log(queryFilterAndSort);
+        console.log('End BUG');
+        const courses = await courseQuery.filterAndSortCourse(instructorId, queryFilterAndSort);
+        console.log(courses);
+        return res.status(200).send(courses);
+    } catch (err) {
+        return res.internalServerError('Không tìm thấy khóa học nào !');
+    }
 };
 
 export const userHandler = {
     getAllCourse,
-    getTopCourse: getTopCourse
+    getTopCourse,
+    filterAndSortCourse
 };

@@ -19,7 +19,7 @@
     "format": "prettier '**/*.{tsx,ts,js,json,md,yml,yaml}' --write",
     "prepare": "is-ci || husky install",
     "bootstrap": "yarn start:docker && yarn",
-    "start:db": "yarn db:dropTable && yarn db:createTable && yarn db:createTrigger && yarn db:seedData && yarn db:crudReview && yarn db:topCourse",
+    "start:db": "yarn db:dropTable && yarn db:createTable && yarn db:createTrigger && yarn db:seedData && yarn db:crudReview && yarn db:topCourse && yarn db:filterAndSortCourse",
     "start:docker": "docker compose -f docker-compose.dev.yml up -d",
     "clean:docker": "docker compose -f docker-compose.dev.yml down --volumes --remove-orphans",
     "clean:git": "git branch --merged >/tmp/merged-branches && nano /tmp/merged-branches && xargs git branch -D </tmp/merged-branches && git fetch --prune --all",

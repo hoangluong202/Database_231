@@ -1,3 +1,4 @@
+import { FilterSearchCourseDto } from '@be/dtos/in';
 import { CourseDto, CourseTopDto } from '@be/dtos/out';
 import { logger, poolQuery } from '@be/utils';
 import { faker } from '@faker-js/faker';
@@ -48,4 +49,21 @@ const getTopCourses = async (instructorId: number): Promise<CourseTopDto[]> => {
     }
 };
 
-export const courseQuery = { getCoursesByStudentId, getTopCourses };
+const filterAndSortCourse = async (instructorId: number, queryFilterAndSort: FilterSearchCourseDto): Promise<CourseTopDto[]> => {
+    try {
+        const { courseLabels, audienceLabels, sponsorName, sortColumns, sortOrders, minAverageRating } = queryFilterAndSort;
+        const validSortColumns = sortColumns ? sortColumns : ['updatedAt'];
+        const validSortOrders = sortOrders ? sortOrders : ['DESC'];
+        const queryText = `SELECT * FROM filter_and_sort_course($1,$2,$3,$4,$5,$6,$7);`;
+        const { rows } = await poolQuery({
+            text: queryText,
+            values: [instructorId, courseLabels, audienceLabels, sponsorName, validSortColumns, validSortOrders, minAverageRating]
+        });
+        return rows;
+    } catch (err) {
+        logger.error(err);
+        throw err;
+    }
+};
+
+export const courseQuery = { getCoursesByStudentId, getTopCourses, filterAndSortCourse };
