@@ -1,19 +1,17 @@
-import { Pool, QueryConfig } from 'pg';
+import axios, { AxiosError, AxiosResponse } from 'axios';
 
-const pool = new Pool({
-    host: 'localhost',
-    port: 5432,
-    user: 'postgres',
-    password: 'password',
-    database: 'postgres'
+export const server = axios.create({
+    baseURL: 'http://localhost:8080',
+    withCredentials: true
 });
 
-export const invokeQuery = async (queryTextOrConfig: string | QueryConfig) => {
+export async function invoke<R = unknown, D = unknown>(call: Promise<AxiosResponse<R, D>>) {
     try {
-        console.log('Hello');
-        const result = await pool.query(queryTextOrConfig);
-        return result;
+        const response = await call;
+        return response.data;
     } catch (err) {
-        throw err;
+        const e = err as AxiosError;
+        const errPayload = e.response?.data ? (e.response.data as ResponseError) : e;
+        throw errPayload;
     }
-};
+}
