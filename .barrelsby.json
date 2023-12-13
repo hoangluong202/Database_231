@@ -15,6 +15,7 @@
         "./backend/hooks",
         "./backend/interfaces",
         "./backend/repositories",
+        "./backend/queries",
         "./backend/utils"
     ],
     "exclude": [

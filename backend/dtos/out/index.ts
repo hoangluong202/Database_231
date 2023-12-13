@@ -3,4 +3,5 @@
  */
 
 export * from './auth.dto';
+export * from './review.dto';
 export * from './user.dto';
