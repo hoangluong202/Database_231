@@ -210,65 +210,42 @@ async function deleteReview() {
 
 async function getReviewByStudent() {
     await pool.query(`
-        CREATE OR REPLACE FUNCTION get_review_by_student(p_student_id INTEGER) RETURNS TABLE(
-            "courseName" VARCHAR(100),
-            "categoryName" VARCHAR(100)[],
-            rating INTEGER,
-            content TEXT,
-            "createdAt" TIMESTAMP(3)
-        ) AS $$
-        BEGIN
-            RETURN QUERY
-            SELECT
-                cr."name" AS "courseName",
-                array_agg(cat."name") AS "categoryName",
-                src."rating",
-                src."content",
-                src."createAt"
-            FROM
-                "StudentReviewCourse" AS src
-                INNER JOIN "Course" AS cr ON src."courseId" = cr."id"
-                INNER JOIN "Category" AS cat ON src."courseId" = cat."courseId"
-            WHERE
-                src."studentId" = p_student_id
-            GROUP BY
-                cr."name",
-                src."rating",
-                src."content",
-                src."createAt";
-        END;
-        $$ LANGUAGE plpgsql;
+    CREATE OR REPLACE FUNCTION get_review_by_student(p_student_id INTEGER) RETURNS TABLE(
+        "courseId" INTEGER,
+        "studentId" INTEGER,
+        "courseName" VARCHAR(100),
+        "categoryName" VARCHAR(100)[],
+        rating INTEGER,
+        content TEXT,
+        "createdAt" TIMESTAMP(3)
+    ) AS $$
+    BEGIN
+        RETURN QUERY
+        SELECT
+            src."courseId",
+            src."studentId",
+            cr."name" AS "courseName",
+            array_agg(cat."name") AS "categoryName",
+            src."rating",
+            src."content",
+            src."createAt"
+        FROM
+            "StudentReviewCourse" AS src
+            INNER JOIN "Course" AS cr ON src."courseId" = cr."id"
+            LEFT JOIN "Category" AS cat ON src."courseId" = cat."courseId"
+        WHERE
+            src."studentId" = p_student_id
+        GROUP BY
+            cr."name",
+            src."rating",
+            src."content",
+            src."createAt",
+            src."courseId",
+            src."studentId";
+    END;
+    $$ LANGUAGE plpgsql;
     `);
-    // get category name array in pg
-    // await pool.query(`
-    //     CREATE OR REPLACE FUNCTION get_review_by_student(p_student_id INTEGER) RETURNS TABLE(
-    //         "courseName" VARCHAR(100),
-    //         "categoryName" VARCHAR(100)[],
-    //         rating INTEGER,
-    //         content TEXT,
-    //         "createdAt" TIMESTAMP(3)
-    //     ) AS $$
-    //     BEGIN
-    //         RETURN QUERY
-    //         SELECT
-    //             cr."name" AS "courseName",
-    //             array_agg(cat."name") AS "categoryName",
-    //             src."rating",
-    //             src."content",
-    //             src."createAt"
-    //         FROM
-    //             "StudentReviewCourse" AS src
-    //             INNER JOIN "Course" AS cr ON src."courseId" = cr."id"
-    //             INNER JOIN "Category" AS cat ON src."courseId" = cat."courseId"
-    //         WHERE
-    //             src."studentId" = p_student_id
-    //         GROUP BY
-    //             cr."name",
-    //             src."rating",
-    //             src."content",
-    //             src."createAt";
-    //     END;
-    //     $$ LANGUAGE plpgsql;
+    process.exit(0);
 }
 
 insertReview();

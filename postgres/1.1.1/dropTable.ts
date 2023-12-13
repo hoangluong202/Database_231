@@ -23,11 +23,11 @@ async function dropTable() {
     await pool.query(`DROP TABLE IF EXISTS "PaidCourseOrder" CASCADE`);
     await pool.query(`DROP TABLE IF EXISTS "Answer" CASCADE`);
     //using pool to query dropt all type from file type.sql
-    await pool.query(`DROP TYPE IF EXISTS "CourseLabel"`);
-    await pool.query(`DROP TYPE IF EXISTS "AudienceLabel"`);
-    await pool.query(`DROP TYPE IF EXISTS "MaterialType"`);
-    await pool.query(`DROP TYPE IF EXISTS "AnswerOption"`);
-    await pool.query(`DROP TYPE IF EXISTS "PaymentMethod"`);
+    await pool.query(`DROP TYPE IF EXISTS "CourseLabel" CASCADE`);
+    await pool.query(`DROP TYPE IF EXISTS "AudienceLabel"CASCADE`);
+    await pool.query(`DROP TYPE IF EXISTS "MaterialType" CASCADE`);
+    await pool.query(`DROP TYPE IF EXISTS "AnswerOption" CASCADE`);
+    await pool.query(`DROP TYPE IF EXISTS "PaymentMethod" CASCADE`);
 
     process.exit(0);
 }

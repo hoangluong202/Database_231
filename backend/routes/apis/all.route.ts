@@ -1,13 +1,14 @@
 import { Type } from '@sinclair/typebox';
-import { ReviewResultDto, CourseDto } from '@be/dtos/out';
+import { ReviewResultDto, CourseDto, OkDto, CourseTopDto } from '@be/dtos/out';
 import { reviewHandler, userHandler } from '@be/handlers';
 import { createRoutes } from '@be/utils';
 import { RouteHandlerMethod } from 'fastify';
+import { InsertReviewDto } from '@be/dtos/in';
 
 export const userPlugin = createRoutes('All', [
     {
         method: 'GET',
-        url: '/review/:studentId',
+        url: '/reviews/:studentId',
         schema: {
             response: {
                 200: Type.Array(ReviewResultDto)
@@ -24,5 +25,47 @@ export const userPlugin = createRoutes('All', [
             }
         },
         handler: userHandler.getAllCourse as RouteHandlerMethod
+    },
+    {
+        method: 'POST',
+        url: '/reviews',
+        schema: {
+            body: InsertReviewDto,
+            response: {
+                200: OkDto
+            }
+        },
+        handler: reviewHandler.insertReview as RouteHandlerMethod
+    },
+    {
+        method: 'PUT',
+        url: '/reviews',
+        schema: {
+            body: InsertReviewDto,
+            response: {
+                200: OkDto
+            }
+        },
+        handler: reviewHandler.updateReview as RouteHandlerMethod
+    },
+    {
+        method: 'DELETE',
+        url: '/reviews/:studentId/:courseId',
+        schema: {
+            response: {
+                200: OkDto
+            }
+        },
+        handler: reviewHandler.deleteReview as RouteHandlerMethod
+    },
+    {
+        method: 'GET',
+        url: '/instructors/:instructorId/courses/top',
+        schema: {
+            response: {
+                200: Type.Array(CourseTopDto)
+            }
+        },
+        handler: userHandler.getTopCourse as RouteHandlerMethod
     }
 ]);
