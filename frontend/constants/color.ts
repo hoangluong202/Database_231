@@ -10,14 +10,14 @@ export const CATEGORY_COLOR: Record<number, colors> = {
     6: 'red'
 };
 
-export const COURSE_LABEL_COLOR: Record<CourseLabel, colors> = {
+export const COURSE_LABEL_COLOR: Record<string, colors> = {
     Bestseller: 'deep-orange',
     HighestRated: 'amber',
     HotAndNew: 'lime',
     New: 'green'
 };
 
-export const AUDIENCE_LABEL_COLOR: Record<AudienceLabel, colors> = {
+export const AUDIENCE_LABEL_COLOR: Record<string, colors> = {
     AllLevels: 'teal',
     Beginner: 'cyan',
     Expert: 'blue',

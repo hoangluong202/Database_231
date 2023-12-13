@@ -18,18 +18,19 @@ type Course = {
     price: number | null;
     sponsor: string | null;
     description: string;
+    isReviewed: boolean;
 };
 
 type InstructorCourse = {
     courseId: number;
     courseName: string;
-    courseLabel: CourseLabel;
-    audienceLabel: AudienceLabel;
+    courseLabel: string;
+    audienceLabel: string;
     updatedAt: string;
     totalDuration: number;
     sponsorName: string | null;
     priceDiscounted: number | null;
-    averageRating: number;
+    averageRating: string | null;
 };
 
 type ReviewCreationPayload = {
@@ -39,14 +40,26 @@ type ReviewCreationPayload = {
     content: string;
 };
 
+type FilterAndSortPayload = {
+    courseLabels: string[] | null;
+    audiencelabels: string[] | null;
+    sponsorName: string[] | null;
+    sortColumns: string[];
+    sortOrders: string[];
+    minAverageRating: number | null;
+};
+
 type ReviewStore = {
     reviewStatus: StoreStatus;
     courseStatus: StoreStatus;
     reviewData: Review[];
     listCourses: Course[];
+    listInstructorCourses: InstructorCourse[];
     getReviewByStudentId: (studentId: number) => Promise<void>;
     getListCoursesByStudentId: (studentId: number) => Promise<void>;
     createReview: (payload: ReviewCreationPayload) => Promise<void>;
     updateReview: (payload: ReviewCreationPayload) => Promise<void>;
     deleteReview: (studentId: number, courseId: number) => Promise<void>;
+    getListCoursesByInstructorId: (instructorId: number) => Promise<void>;
+    filterAndSortCourses: (instructorId: number, payload: FilterAndSortPayload) => Promise<void>;
 };

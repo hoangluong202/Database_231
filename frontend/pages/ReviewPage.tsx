@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { createColumnHelper, flexRender, getCoreRowModel, RowModel, useReactTable } from '@tanstack/react-table';
 import moment from 'moment';
 import {
@@ -20,13 +20,50 @@ import { CATEGORY_COLOR } from '@fe/constants';
 import { useReviewStore } from '@fe/states';
 
 export function ReviewPage() {
-    const { reviewData, getReviewByStudentId } = useReviewStore();
+    const { reviewData, getReviewByStudentId, updateReview, deleteReview } = useReviewStore();
+
+    const [courseId, setCourseId] = useState<number>(-1);
     const [rating, setRating] = useState<number>(1);
+    const [reviewText, setReviewText] = useState<string>('');
     const [openEdit, setOpenEdit] = useState<boolean>(false);
     const [openDelete, setOpenDelete] = useState<boolean>(false);
 
-    const handleOpenEdit = () => setOpenEdit((cur) => !cur);
-    const handleOpenDelete = () => setOpenDelete((cur) => !cur);
+    const handleReviewText = (event: ChangeEvent<HTMLTextAreaElement>) => {
+        setReviewText(event.target.value);
+    };
+
+    const handleOpenEdit = useCallback(
+        (index: number) => {
+            setCourseId(reviewData[index].courseId);
+            setRating(reviewData[index].rating);
+            setReviewText(reviewData[index].content);
+            setOpenEdit((cur) => !cur);
+        },
+        [reviewData]
+    );
+
+    const handleOpenDelete = useCallback(
+        (index: number) => {
+            setCourseId(reviewData[index].courseId);
+            setOpenDelete((cur) => !cur);
+        },
+        [reviewData]
+    );
+
+    const handleUpdateReview = async () => {
+        await updateReview({
+            studentId: 1,
+            courseId: courseId,
+            rating: rating,
+            content: reviewText
+        });
+        setOpenEdit((cur) => !cur);
+    };
+
+    const handleDeleteReview = async () => {
+        await deleteReview(1, courseId);
+        setOpenDelete((cur) => !cur);
+    };
 
     useEffect(() => {
         getReviewByStudentId(1);
@@ -85,9 +122,9 @@ export function ReviewPage() {
             }),
             columnHelper.display({
                 id: 'updateReview',
-                cell: () => (
+                cell: (info) => (
                     <Tooltip content='Edit Review'>
-                        <IconButton placeholder='' variant='text' onClick={handleOpenEdit}>
+                        <IconButton placeholder='' variant='text' onClick={() => handleOpenEdit(info.row.index)}>
                             <PencilIcon strokeWidth={2} className='h-5 w-5' />
                         </IconButton>
                     </Tooltip>
@@ -95,16 +132,16 @@ export function ReviewPage() {
             }),
             columnHelper.display({
                 id: 'deleteReview',
-                cell: () => (
+                cell: (info) => (
                     <Tooltip content='Delete Review'>
-                        <IconButton placeholder='' variant='text' onClick={handleOpenDelete}>
+                        <IconButton placeholder='' variant='text' onClick={() => handleOpenDelete(info.row.index)}>
                             <TrashIcon strokeWidth={2} className='w-5 h-5 text-red-500' />
                         </IconButton>
                     </Tooltip>
                 )
             })
         ],
-        [columnHelper]
+        [columnHelper, handleOpenEdit, handleOpenDelete]
     );
 
     const fileTable = useReactTable<Review>({
@@ -170,29 +207,29 @@ export function ReviewPage() {
                     </table>
                 </CardBody>
             </Card>
-            <Dialog placeholder='' size='xs' open={openEdit} handler={handleOpenEdit} className='bg-transparent shadow-none'>
+            <Dialog placeholder='' size='xs' open={openEdit} handler={() => setOpenEdit(false)} className='bg-transparent shadow-none'>
                 <Card placeholder='' className='mx-auto w-full'>
                     <CardBody placeholder='' className='flex flex-col gap-4'>
                         <Typography placeholder='' variant='h4' color='blue-gray'>
                             Chỉnh sửa điểm số và nhận xét của bạn trong khóa học này
                         </Typography>
                         <Typography placeholder='' className='-mb-2' variant='h6'>
-                            Điểm số
+                            Điểm số: {rating}.0
                         </Typography>
                         <Rating placeholder='' value={rating} onChange={(value) => setRating(value)} />
                         <Typography placeholder='' className='-mb-2' variant='h6'>
                             Nhận xét
                         </Typography>
-                        <Textarea label='Nhận xét' size='md' />
+                        <Textarea label='Nhận xét' size='md' value={reviewText} onChange={handleReviewText} />
                     </CardBody>
                     <CardFooter placeholder='' className='pt-0'>
-                        <Button placeholder='' variant='gradient' onClick={handleOpenEdit} fullWidth>
+                        <Button placeholder='' variant='gradient' onClick={handleUpdateReview} fullWidth>
                             Xác nhận
                         </Button>
                     </CardFooter>
                 </Card>
             </Dialog>
-            <Dialog placeholder='' size='xs' open={openDelete} handler={handleOpenDelete} className='bg-transparent shadow-none'>
+            <Dialog placeholder='' size='xs' open={openDelete} handler={() => setOpenDelete(false)} className='bg-transparent shadow-none'>
                 <Card placeholder='' className='mx-auto w-full max-w-[24rem]'>
                     <CardBody placeholder=''>
                         <Typography placeholder='' variant='h4' color='blue-gray'>
@@ -200,7 +237,7 @@ export function ReviewPage() {
                         </Typography>
                     </CardBody>
                     <CardFooter placeholder='' className='pt-0'>
-                        <Button placeholder='' color='red' variant='gradient' onClick={handleOpenDelete} fullWidth>
+                        <Button placeholder='' color='red' variant='gradient' onClick={handleDeleteReview} fullWidth>
                             Xác nhận
                         </Button>
                     </CardFooter>

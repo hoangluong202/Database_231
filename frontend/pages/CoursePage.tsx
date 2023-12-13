@@ -72,11 +72,13 @@ export function CoursePage() {
                                         </div>
                                         <Button
                                             placeholder=''
-                                            className='bg-blue-500 text-white normal-case text-base'
+                                            className='normal-case text-base'
+                                            color={item.isReviewed ? 'gray' : 'blue'}
                                             onClick={() => {
                                                 setCourseId(item.courseId);
                                                 handleOpen();
                                             }}
+                                            disabled={item.isReviewed}
                                         >
                                             Thêm nhận xét
                                         </Button>

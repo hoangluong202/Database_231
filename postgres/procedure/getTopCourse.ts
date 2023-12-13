@@ -40,7 +40,7 @@ async function getTopCourse() {
                 WHEN pc."courseId" IS NOT NULL THEN pc."priceDiscounted"
                 ELSE NULL
             END AS "priceDiscounted",
-            ROUND(AVG(src."rating"),1) AS "averageRating"
+            ROUND(COALESCE(AVG(src."rating"), 0),1) AS "averageRating"
         FROM
             "Course" AS c
             LEFT JOIN "FreeCourse" AS fc ON c."id" = fc."courseId"
