@@ -7,6 +7,7 @@
         "./frontend/layouts",
         "./frontend/pages",
         "./frontend/services",
+        "./frontend/states",
         "./backend/handlers",
         "./backend/constants",
         "./backend/dtos/in",
@@ -15,6 +16,7 @@
         "./backend/hooks",
         "./backend/interfaces",
         "./backend/repositories",
+        "./backend/queries",
         "./backend/utils"
     ],
     "exclude": [

@@ -51,6 +51,7 @@
             "@be/configs": ["backend/configs"],
             "@be/configs/*": ["backend/configs/*"],
             "@be/repositories": ["backend/repositories"],
+            "@be/queries": ["backend/queries"],
             "@be/utils": ["backend/utils"],
             "@be/hooks": ["backend/hooks"],
             "@be/routes": ["backend/routes"],
