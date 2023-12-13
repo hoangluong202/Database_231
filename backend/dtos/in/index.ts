@@ -3,5 +3,6 @@
  */
 
 export * from './auth.dto';
+export * from './delete-review.dto';
 export * from './insert-review.dto';
 export * from './review.dto';

@@ -3,7 +3,7 @@ import { ReviewResultDto, CourseDto, OkDto } from '@be/dtos/out';
 import { reviewHandler, userHandler } from '@be/handlers';
 import { createRoutes } from '@be/utils';
 import { RouteHandlerMethod } from 'fastify';
-import { InsertReviewDto } from '@be/dtos/in';
+import { DeleteReviewDto, InsertReviewDto } from '@be/dtos/in';
 
 export const userPlugin = createRoutes('All', [
     {
@@ -35,6 +35,28 @@ export const userPlugin = createRoutes('All', [
                 200: OkDto
             }
         },
-        handler: userHandler.insertReview as RouteHandlerMethod
+        handler: reviewHandler.insertReview as RouteHandlerMethod
+    },
+    {
+        method: 'PUT',
+        url: '/reviews',
+        schema: {
+            body: InsertReviewDto,
+            response: {
+                200: OkDto
+            }
+        },
+        handler: reviewHandler.updateReview as RouteHandlerMethod
+    },
+    {
+        method: 'DELETE',
+        url: '/reviews',
+        schema: {
+            body: DeleteReviewDto,
+            response: {
+                200: OkDto
+            }
+        },
+        handler: reviewHandler.updateReview as RouteHandlerMethod
     }
 ]);
