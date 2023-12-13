@@ -5,7 +5,8 @@ import { faker } from '@faker-js/faker';
 const getCoursesByStudentId = async (studentId: number): Promise<CourseDto[]> => {
     try {
         const queryText = `
-        SELECT c.name,
+        SELECT c."id" AS "courseId",
+              c.name,
               pc."priceDiscounted" AS price,
               fc."sponsorName" AS sponsor,
               c.description
