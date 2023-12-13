@@ -8,6 +8,7 @@
         "./frontend/pages",
         "./frontend/services",
         "./frontend/states",
+        "./frontend/utils",
         "./backend/handlers",
         "./backend/constants",
         "./backend/dtos/in",

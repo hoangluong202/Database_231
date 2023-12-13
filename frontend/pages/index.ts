@@ -3,4 +3,5 @@
  */
 
 export * from './CoursePage';
+export * from './InstructorPage';
 export * from './ReviewPage';
