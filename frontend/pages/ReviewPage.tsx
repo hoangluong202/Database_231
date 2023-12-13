@@ -1,46 +1,17 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { createColumnHelper, flexRender, getCoreRowModel, RowModel, useReactTable } from '@tanstack/react-table';
+import moment from 'moment';
 import { Card, CardBody, CardHeader, Chip, IconButton, Rating, Tooltip, Typography } from '@material-tailwind/react';
 import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { CATEGORY_COLOR } from '@fe/constants';
+import { useReviewStore } from '@fe/states';
 
 export function ReviewPage() {
-    const mockData = [
-        {
-            courseName: 'HTML for Beginners',
-            categoryName: 'Web development',
-            rating: 4,
-            content: 'This course is awesome',
-            createdAt: '1/1/2024'
-        },
-        {
-            courseName: 'HTML for Beginners',
-            categoryName: 'Web development',
-            rating: 4,
-            content: 'This course is awesome',
-            createdAt: '1/1/2024'
-        },
-        {
-            courseName: 'HTML for Beginners',
-            categoryName: 'Web development',
-            rating: 4,
-            content: 'This course is awesome',
-            createdAt: '1/1/2024'
-        },
-        {
-            courseName: 'HTML for Beginners',
-            categoryName: 'Web development',
-            rating: 4,
-            content: 'This course is awesome',
-            createdAt: '1/1/2024'
-        },
-        {
-            courseName: 'HTML for Beginners',
-            categoryName: 'Web development',
-            rating: 4,
-            content: 'This course is awesome',
-            createdAt: '1/1/2024'
-        }
-    ];
+    const { reviewData, getReviewByStudentId } = useReviewStore();
+
+    useEffect(() => {
+        getReviewByStudentId(1);
+    }, [getReviewByStudentId]);
 
     const columnHelper = createColumnHelper<Review>();
 
@@ -57,19 +28,23 @@ export function ReviewPage() {
             columnHelper.accessor('categoryName', {
                 header: 'DANH MỤC',
                 cell: (info) => (
-                    <div className='w-max'>
-                        <Chip variant='ghost' size='sm' value={info.getValue()} color='green' />
+                    <div className='w-max flex flex-col gap-1'>
+                        {info.getValue().map((item, index) => (
+                            <Chip
+                                key={index}
+                                variant='ghost'
+                                size='sm'
+                                value={item}
+                                color={CATEGORY_COLOR[index]}
+                                className='normal-case w-fit'
+                            />
+                        ))}
                     </div>
                 )
             }),
             columnHelper.accessor('rating', {
                 header: 'ĐIỂM RATING',
-                cell: (info) => (
-                    <div className='flex flex-col items-center gap-2 font-bold text-blue-gray-500'>
-                        {info.getValue()}
-                        <Rating placeholder='' value={4} />
-                    </div>
-                )
+                cell: (info) => <Rating placeholder='' value={info.getValue()} />
             }),
             columnHelper.accessor('content', {
                 header: 'NHẬN XÉT',
@@ -77,7 +52,12 @@ export function ReviewPage() {
             }),
             columnHelper.accessor('createdAt', {
                 header: 'NGÀY NHẬN XÉT',
-                cell: (info) => info.getValue()
+                cell: (info) =>
+                    info.getValue() && info.getValue().length > 0 ? (
+                        <Typography placeholder=''>{moment.unix(moment(info.getValue()).unix()).format('DD/MM/YYYY')}</Typography>
+                    ) : (
+                        ''
+                    )
             }),
             columnHelper.display({
                 id: 'updateReview',
@@ -105,7 +85,7 @@ export function ReviewPage() {
 
     const fileTable = useReactTable<Review>({
         columns: columnDefs,
-        data: mockData ?? [],
+        data: reviewData ?? [],
         getCoreRowModel: getCoreRowModel<RowModel<Review>>()
     });
 
@@ -145,8 +125,8 @@ export function ReviewPage() {
                         ))}
                     </thead>
                     <tbody className='bg-white'>
-                        {mockData &&
-                            mockData.length > 0 &&
+                        {reviewData &&
+                            reviewData.length > 0 &&
                             fileTable.getRowModel().rows.map((row, index) => {
                                 const isLast = index === fileTable.getRowModel().rows.length - 1;
                                 const classes = isLast ? 'p-4' : 'p-4 border-b border-blue-gray-50';
