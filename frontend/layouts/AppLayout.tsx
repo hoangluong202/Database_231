@@ -1,4 +1,4 @@
-import { AppNavigation } from '@components';
+import { AppNavigation } from 'frontend/components';
 import { useMemo } from 'react';
 import { Routes, Route } from 'react-router-dom';
 

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Accordion, AccordionBody, AccordionHeader, Card, List, ListItem, ListItemPrefix, Typography } from '@material-tailwind/react';
 import { ChevronDownIcon } from '@heroicons/react/24/outline';
-import logo from '@assets/elearning-logo.png';
+import logo from '@fe/assets/elearning-logo.png';
 
 export const AppNavigation: Component<{ menu: RouteMenu }> = ({ menu }) => {
     const navigate = useNavigate();
