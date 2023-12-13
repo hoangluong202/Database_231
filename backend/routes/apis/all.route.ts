@@ -1,9 +1,9 @@
 import { Type } from '@sinclair/typebox';
-import { ReviewResultDto, CourseDto, OkDto } from '@be/dtos/out';
+import { ReviewResultDto, CourseDto, OkDto, CourseTopDto } from '@be/dtos/out';
 import { reviewHandler, userHandler } from '@be/handlers';
 import { createRoutes } from '@be/utils';
 import { RouteHandlerMethod } from 'fastify';
-import { DeleteReviewDto, InsertReviewDto } from '@be/dtos/in';
+import { InsertReviewDto } from '@be/dtos/in';
 
 export const userPlugin = createRoutes('All', [
     {
@@ -50,13 +50,22 @@ export const userPlugin = createRoutes('All', [
     },
     {
         method: 'DELETE',
-        url: '/reviews',
+        url: '/reviews/:studentId/:courseId',
         schema: {
-            body: DeleteReviewDto,
             response: {
                 200: OkDto
             }
         },
         handler: reviewHandler.deleteReview as RouteHandlerMethod
+    },
+    {
+        method: 'GET',
+        url: '/instructors/:instructorId/courses/top',
+        schema: {
+            response: {
+                200: Type.Array(CourseTopDto)
+            }
+        },
+        handler: userHandler.getTopCourse as RouteHandlerMethod
     }
 ]);

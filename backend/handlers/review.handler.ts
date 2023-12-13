@@ -24,8 +24,8 @@ const updateReview: Handler<OkDto, { Body: InsertReviewDto }> = async (req, res)
     return res.status(200).send({ message: 'Chỉnh sửa đánh giá thành công !' });
 };
 
-const deleteReview: Handler<OkDto, { Body: DeleteReviewDto }> = async (req, res) => {
-    const reviewData = req.body;
+const deleteReview: Handler<OkDto, { Params: DeleteReviewDto }> = async (req, res) => {
+    const reviewData = req.params;
     const isSucessful = await reviewQuery.deleteReview(reviewData);
     if (!isSucessful) return res.internalServerError('Xóa đánh giá thất bại !');
     return res.status(200).send({ message: 'Xóa đánh giá thành công !' });
