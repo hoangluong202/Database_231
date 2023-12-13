@@ -69,10 +69,10 @@ export const userPlugin = createRoutes('All', [
         handler: userHandler.getTopCourse as RouteHandlerMethod
     },
     {
-        method: 'GET',
+        method: 'POST',
         url: '/instructors/:instructorId/courses/filter',
         schema: {
-            querystring: FilterSearchCourseDto,
+            body: FilterSearchCourseDto,
             response: {
                 200: Type.Array(CourseTopDto)
             }

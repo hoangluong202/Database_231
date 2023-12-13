@@ -22,13 +22,13 @@ const getTopCourse: Handler<CourseTopDto[], { Params: InstructorIdDto }> = async
     }
 };
 
-const filterAndSortCourse: Handler<CourseTopDto[], { Params: InstructorIdDto; Querystring: FilterSearchCourseDto }> = async (req, res) => {
+const filterAndSortCourse: Handler<CourseTopDto[], { Params: InstructorIdDto; Body: FilterSearchCourseDto }> = async (req, res) => {
     try {
         const instructorId = req.params.instructorId;
-        const queryFilterAndSort = req.query;
-        console.log('Begin BUG');
+        const queryFilterAndSort = req.body;
+        console.log('start bug');
         console.log(queryFilterAndSort);
-        console.log('End BUG');
+        console.log('end bug');
         const courses = await courseQuery.filterAndSortCourse(instructorId, queryFilterAndSort);
         console.log(courses);
         return res.status(200).send(courses);

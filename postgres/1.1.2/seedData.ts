@@ -43,9 +43,15 @@ async function seedData() {
         "audienceLabel",
         "instructorId")
     VALUES ('HTML for Beginners', 'Learn HTML to become a fullstack developer', 'HighestRated', 'Beginner', 2),
-    ('SQL for Beginners', 'Learn SQL from zero to hero', 'Bestseller', 'Beginner', 3),
-    ('PostgreSQL to in depth', 'Learn PostgreSQL to become a DBA', 'Bestseller', 'Intermediate', 3),
-    ('CSS for Beginners', 'Learn CSS to become a frontend developer', 'HighestRated', 'Beginner', 2);
+    ('SQL for Beginners', 'Learn SQL from zero to hero', 'Bestseller', 'Beginner', 2),
+    ('PostgreSQL to in depth', 'Learn PostgreSQL to become a DBA', 'Bestseller', 'Intermediate', 2),
+    ('CSS for Beginners', 'Learn CSS to become a frontend developer', 'HighestRated', 'Beginner', 2),
+    ('JavaScript for Beginners', 'Learn JavaScript to become a fullstack developer', 'New', 'Intermediate', 3),
+    ('Python for Beginners', 'Learn Python to become a backend developer', 'HotAndNew', 'Beginner', 2),
+    ('Java for Beginners', 'Learn Java to become a backend developer', 'Bestseller', 'AllLevels', 3),
+    ('C# for Beginners', 'Learn C# to become a backend developer', 'HighestRated', 'Beginner', 2),
+    ('C++ for Beginners', 'Learn C++ to become a backend developer', 'New', 'AllLevels', 2),
+    ('PHP for Beginners', 'Learn PHP to become a backend developer', 'HighestRated', 'Expert', 3);
     `);
 
     // insert free course
@@ -53,7 +59,10 @@ async function seedData() {
     INSERT INTO "FreeCourse" ("courseId",
         "sponsorName")
     VALUES (1,'Google'),
-           (4,'Google');
+           (4,'Google'),
+           (7,'Microsoft'),
+           (10,'Microsoft')
+           ;
     `);
 
     // insert paid course
@@ -65,7 +74,11 @@ async function seedData() {
         "promoEndDate",
         "parentId")
     VALUES (2, 100000, 50000, 50, NULL, NULL),
-    (3, 200000, 160000, 20, NULL, 2);
+    (3, 200000, 160000, 20, NULL, 2),
+    (5, 100000, 50000, 50, NULL, NULL),
+    (6, 200000, 160000, 20, NULL, 5),
+    (8, 100000, 50000, 50, NULL, NULL),
+    (9, 200000, 160000, 20, NULL, 8);
     `);
 
     //insert section
@@ -141,7 +154,11 @@ async function seedData() {
     INSERT INTO "PaidCourseOrder" ("orderId",
         "paidCourseId")
     VALUES (1,2),
-    (1,3) ;
+    (1,3),
+    (1,5),
+    (1,6),
+    (1,8),
+    (1,9) ;
     `);
 
     //insert student register free course
@@ -149,7 +166,9 @@ async function seedData() {
     INSERT INTO "StudentRegisterFreeCourse" ("studentId",
         "courseId")
     VALUES (1,1),
-            (1,4);
+            (1,4),
+            (1,7),
+            (1,10);
     `);
 
     //insert student review course
@@ -183,7 +202,13 @@ async function seedData() {
     (2,'Database category','Database','How to become a database administrator'),
     (1,'Web development category','Web development','How to become a web developer'),
     (3,'Database category','Database','How to become a database administrator'),
-    (4,'Web development category','Web development','How to become a web developer');
+    (4,'Web development category','Web development','How to become a web developer'),
+    (5,'Web development category','Web development','How to become a web developer'),
+    (6,'Database category','Database','How to become a database administrator'),
+    (7,'Web development category','Web development','How to become a web developer'),
+    (8,'Database category','Database','How to become a database administrator'),
+    (9,'Web development category','Web development','How to become a web developer'),
+    (10,'Database category','Database','How to become a database administrator');
     `);
 
     process.exit(0);
