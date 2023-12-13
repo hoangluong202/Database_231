@@ -1,12 +1,21 @@
 {
     "directory": [
-        "./web_ui/components",
-        "./web_ui/constants",
-        "./web_ui/hooks",
-        "./web_ui/interfaces",
-        "./web_ui/layouts",
-        "./web_ui/pages",
-        "./web_ui/services"
+        "./frontend/components",
+        "./frontend/constants",
+        "./frontend/hooks",
+        "./frontend/interfaces",
+        "./frontend/layouts",
+        "./frontend/pages",
+        "./frontend/services",
+        "./backend/handlers",
+        "./backend/constants",
+        "./backend/dtos/in",
+        "./backend/dtos/out",
+        "./backend/configs",
+        "./backend/hooks",
+        "./backend/interfaces",
+        "./backend/repositories",
+        "./backend/utils"
     ],
     "exclude": [
         "__mock__",
