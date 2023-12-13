@@ -1,6 +1,6 @@
-import { ChatBubbleLeftEllipsisIcon, WindowIcon } from '@heroicons/react/24/outline';
+import { ChatBubbleLeftEllipsisIcon, TvIcon, WindowIcon } from '@heroicons/react/24/outline';
 import { AppLayout } from 'frontend/layouts';
-import { ReviewPage, CoursePage } from 'frontend/pages';
+import { ReviewPage, CoursePage, InstructorPage } from 'frontend/pages';
 
 export default function App() {
     return (
@@ -19,6 +19,13 @@ export default function App() {
                     path: '/review',
                     name: 'Review',
                     element: <ReviewPage />
+                },
+                {
+                    type: 'item',
+                    icon: <TvIcon className='h-5 w-5' />,
+                    path: '/instructor',
+                    name: 'Instructor',
+                    element: <InstructorPage />
                 }
             ]}
         />

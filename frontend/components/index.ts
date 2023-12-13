@@ -3,3 +3,4 @@
  */
 
 export * from './AppNavigation';
+export * from './Filter';

@@ -23,10 +23,10 @@ export function ReviewPage() {
     const { reviewData, getReviewByStudentId } = useReviewStore();
     const [rating, setRating] = useState<number>(1);
     const [openEdit, setOpenEdit] = useState<boolean>(false);
-    //const [openDelete, setOpenDelete] = useState<boolean>(false);
+    const [openDelete, setOpenDelete] = useState<boolean>(false);
 
     const handleOpenEdit = () => setOpenEdit((cur) => !cur);
-    //const handleOpenDelete = () => setOpenDelete((cur) => !cur);
+    const handleOpenDelete = () => setOpenDelete((cur) => !cur);
 
     useEffect(() => {
         getReviewByStudentId(1);
@@ -63,7 +63,12 @@ export function ReviewPage() {
             }),
             columnHelper.accessor('rating', {
                 header: 'ĐIỂM RATING',
-                cell: (info) => <Rating placeholder='' value={info.getValue()} readonly />
+                cell: (info) => (
+                    <div className='flex flex-col items-center gap-2 font-bold text-blue-gray-500'>
+                        {info.getValue()}.0
+                        <Rating placeholder='' value={info.getValue()} readonly />
+                    </div>
+                )
             }),
             columnHelper.accessor('content', {
                 header: 'NHẬN XÉT',
@@ -92,7 +97,7 @@ export function ReviewPage() {
                 id: 'deleteReview',
                 cell: () => (
                     <Tooltip content='Delete Review'>
-                        <IconButton placeholder='' variant='text'>
+                        <IconButton placeholder='' variant='text' onClick={handleOpenDelete}>
                             <TrashIcon strokeWidth={2} className='w-5 h-5 text-red-500' />
                         </IconButton>
                     </Tooltip>
@@ -182,6 +187,20 @@ export function ReviewPage() {
                     </CardBody>
                     <CardFooter placeholder='' className='pt-0'>
                         <Button placeholder='' variant='gradient' onClick={handleOpenEdit} fullWidth>
+                            Xác nhận
+                        </Button>
+                    </CardFooter>
+                </Card>
+            </Dialog>
+            <Dialog placeholder='' size='xs' open={openDelete} handler={handleOpenDelete} className='bg-transparent shadow-none'>
+                <Card placeholder='' className='mx-auto w-full max-w-[24rem]'>
+                    <CardBody placeholder=''>
+                        <Typography placeholder='' variant='h4' color='blue-gray'>
+                            Bạn có chắc chắn muốn xóa nhận xét này ?
+                        </Typography>
+                    </CardBody>
+                    <CardFooter placeholder='' className='pt-0'>
+                        <Button placeholder='' color='red' variant='gradient' onClick={handleOpenDelete} fullWidth>
                             Xác nhận
                         </Button>
                     </CardFooter>
