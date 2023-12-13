@@ -5,7 +5,7 @@ export const ReviewResultDto = Type.Object({
     categoryName: Type.String(),
     rating: Type.Integer(),
     content: Type.String(),
-    createdAt: Type.Date()
+    createdAt: Type.String()
 });
 
 export type ReviewResultDto = Static<typeof ReviewResultDto>;

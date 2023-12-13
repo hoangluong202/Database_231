@@ -211,17 +211,17 @@ async function deleteReview() {
 async function getReviewByStudent() {
     await pool.query(`
         CREATE OR REPLACE FUNCTION get_review_by_student(p_student_id INTEGER) RETURNS TABLE(
-            courseName VARCHAR(100),
-            categoryName VARCHAR(100),
+            "courseName" VARCHAR(100),
+            "categoryName" VARCHAR(100),
             rating INTEGER,
             content TEXT,
-            createdAt TIMESTAMP(3)
+            "createdAt" TIMESTAMP(3)
         ) AS $$
         BEGIN
             RETURN QUERY
             SELECT
-                cr."name" AS courseName,
-                cat."name" AS categoryName,
+                cr."name" AS "courseName",
+                cat."name" AS "categoryName",
                 src."rating",
                 src."content",
                 src."createAt"

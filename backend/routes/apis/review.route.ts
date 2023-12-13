@@ -2,6 +2,7 @@ import { Type } from '@sinclair/typebox';
 import { ReviewResultDto } from '@be/dtos/out';
 import { reviewHandler } from '@be/handlers';
 import { createRoutes } from '@be/utils';
+import { RouteHandlerMethod } from 'fastify';
 
 export const userPlugin = createRoutes('Review', [
     {
@@ -12,6 +13,6 @@ export const userPlugin = createRoutes('Review', [
                 200: Type.Array(ReviewResultDto)
             }
         },
-        handler: reviewHandler.getReviewByStudentId
+        handler: reviewHandler.getReviewByStudentId as RouteHandlerMethod
     }
 ]);

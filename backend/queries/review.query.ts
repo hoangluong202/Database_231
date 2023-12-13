@@ -6,6 +6,9 @@ const getReviewByStudentId = async (studentId: number): Promise<ReviewResultDto[
         const queryText = `SELECT * FROM get_review_by_student($1)`;
 
         const { rows } = await poolQuery({ text: queryText, values: [studentId] });
+        console.log('BEGIN BUG');
+        console.log(rows);
+        console.log('END BUG');
 
         return rows;
     } catch (err) {
