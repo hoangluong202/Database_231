@@ -1,8 +1,9 @@
 import { Type } from '@sinclair/typebox';
-import { ReviewResultDto, CourseDto } from '@be/dtos/out';
+import { ReviewResultDto, CourseDto, OkDto } from '@be/dtos/out';
 import { reviewHandler, userHandler } from '@be/handlers';
 import { createRoutes } from '@be/utils';
 import { RouteHandlerMethod } from 'fastify';
+import { InsertReviewDto } from '@be/dtos/in';
 
 export const userPlugin = createRoutes('All', [
     {
@@ -24,5 +25,16 @@ export const userPlugin = createRoutes('All', [
             }
         },
         handler: userHandler.getAllCourse as RouteHandlerMethod
+    },
+    {
+        method: 'POST',
+        url: '/reviews',
+        schema: {
+            body: InsertReviewDto,
+            response: {
+                200: OkDto
+            }
+        },
+        handler: userHandler.insertReview as RouteHandlerMethod
     }
 ]);
