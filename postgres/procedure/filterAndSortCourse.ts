@@ -91,7 +91,7 @@ async function filterAndSortCourse() {
                 WHEN pc."courseId" IS NOT NULL THEN pc."priceDiscounted"
                 ELSE NULL
             END AS "priceDiscounted",
-            ROUND(AVG(src."rating"),1 )AS "averageRating"
+            ROUND(COALESCE(AVG(src."rating"), 0),1 )AS "averageRating"
         FROM
             "Course" AS c
             LEFT JOIN "FreeCourse" AS fc ON c."id" = fc."courseId"
@@ -112,8 +112,12 @@ async function filterAndSortCourse() {
             fc."courseId",
             pc."courseId"
         HAVING
-            AVG(src."rating") >= COALESCE(p_min_average_rating, AVG(src."rating"))
-        ORDER BY order_clause;
+            COALESCE(AVG(src."rating"), 0) >= COALESCE(p_min_average_rating, COALESCE(AVG(src."rating"), 0), 0)
+        ORDER BY
+            CASE
+                WHEN order_clause = '' THEN "averageRating"
+                ELSE order_clause
+            END;
     END;
     $$ LANGUAGE plpgsql;
     `);

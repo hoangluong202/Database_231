@@ -21,7 +21,7 @@ import { useReviewStore } from '@fe/states';
 import { formatSecondsToHourMinute } from '@fe/utils';
 
 export function InstructorPage() {
-    const { listInstructorCourses, getListCoursesByInstructorId /*filterAndSortCourses*/ } = useReviewStore();
+    const { listInstructorCourses, filterAndSortCourses, getListCoursesByInstructorId } = useReviewStore();
     const [rotate, setRotate] = useState<number[]>([0, 0, 0, 0, 0]);
     const [filterAndSortPayload, setFilterAndSortPayload] = useState<FilterAndSortPayload>({
         courseLabels: null,
@@ -77,9 +77,32 @@ export function InstructorPage() {
     // };
 
     useEffect(() => {
-        // filterAndSortCourses(2, filterAndSortPayload);
-        getListCoursesByInstructorId(2);
-    }, [getListCoursesByInstructorId]);
+        if (
+            filterAndSortPayload.audiencelabels === null &&
+            filterAndSortPayload.courseLabels === null &&
+            filterAndSortPayload.sponsorName === null &&
+            filterAndSortPayload.sortColumns.length === 1 &&
+            filterAndSortPayload.sortColumns[0] === 'updatedAt' &&
+            filterAndSortPayload.sortOrders.length === 1 &&
+            filterAndSortPayload.sortOrders[0] === 'DESC' &&
+            filterAndSortPayload.minAverageRating === null
+        ) {
+            getListCoursesByInstructorId(2);
+        } else {
+            console.log(filterAndSortPayload);
+            filterAndSortCourses(2, filterAndSortPayload);
+        }
+    }, [
+        filterAndSortPayload.audiencelabels,
+        filterAndSortPayload.courseLabels,
+        filterAndSortPayload.sponsorName,
+        filterAndSortPayload.sortColumns,
+        filterAndSortPayload.sortOrders,
+        filterAndSortPayload.minAverageRating,
+        filterAndSortPayload,
+        getListCoursesByInstructorId,
+        filterAndSortCourses
+    ]);
 
     const columnHelper = createColumnHelper<InstructorCourse>();
 
@@ -194,9 +217,7 @@ export function InstructorPage() {
                                         'rounded-full focus:ring-0 hover:bg-gray-200 normal-case w-fit' +
                                         ((filterAndSortPayload.courseLabels ?? []).includes(item) ? ' bg-teal-100' : '')
                                     }
-                                    onClick={() => async () => {
-                                        handleCourseLabels(item);
-                                    }}
+                                    onClick={() => handleCourseLabels(item)}
                                 >
                                     {item}
                                 </Button>
