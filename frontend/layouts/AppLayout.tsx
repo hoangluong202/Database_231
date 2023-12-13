@@ -21,8 +21,7 @@ export const AppLayout: Component<{ menu: RouteMenu }> = function ({ menu }) {
     return (
         <div>
             <AppNavigation menu={menu} />
-
-            <div className='p-4' style={{ marginLeft: '256px' }}>
+            <div className='p-4' style={{ marginLeft: '240px' }}>
                 <Routes>
                     {routeItems.map((item) => (
                         <Route path={item.path} element={item.element} key={item.path} />

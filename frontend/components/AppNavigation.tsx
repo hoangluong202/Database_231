@@ -22,7 +22,7 @@ export const AppNavigation: Component<{ menu: RouteMenu }> = ({ menu }) => {
     );
 
     return (
-        <Card placeholder='' className='fixed top-0 left-0 h-[calc(100vh)] w-full max-w-[16rem] rounded-none'>
+        <Card placeholder='' className='fixed top-0 left-0 h-[calc(100vh)] w-full max-w-[15rem] rounded-none'>
             <div className='py-4 flex justify-between items-center px-0'>
                 <div className='ml-4'>
                     <LogoCard />

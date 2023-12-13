@@ -230,7 +230,7 @@ async function getReviewByStudent() {
                 INNER JOIN "Course" AS cr ON src."courseId" = cr."id"
                 INNER JOIN "Category" AS cat ON src."courseId" = cat."courseId"
             WHERE
-                src."studentId" = p_student_id;
+                src."studentId" = p_student_id
             GROUP BY
                 cr."name",
                 src."rating",

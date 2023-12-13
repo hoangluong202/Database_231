@@ -45,6 +45,7 @@
     "@material-tailwind/react": "^2.1.5",
     "@prisma/client": "^5.1.1",
     "@sinclair/typebox": "^0.31.28",
+    "@tanstack/react-table": "^8.10.7",
     "bcrypt": "^5.1.0",
     "dotenv": "^16.3.1",
     "envalid": "^7.3.1",
