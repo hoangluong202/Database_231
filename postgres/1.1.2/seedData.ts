@@ -44,14 +44,16 @@ async function seedData() {
         "instructorId")
     VALUES ('HTML for Beginners', 'Learn HTML to become a fullstack developer', 'HighestRated', 'Beginner', 2),
     ('SQL for Beginners', 'Learn SQL from zero to hero', 'Bestseller', 'Beginner', 3),
-    ('PostgreSQL to in depth', 'Learn PostgreSQL to become a DBA', 'Bestseller', 'Intermediate', 3);
+    ('PostgreSQL to in depth', 'Learn PostgreSQL to become a DBA', 'Bestseller', 'Intermediate', 3),
+    ('CSS for Beginners', 'Learn CSS to become a frontend developer', 'HighestRated', 'Beginner', 2);
     `);
 
     // insert free course
     await pool.query(`
     INSERT INTO "FreeCourse" ("courseId",
         "sponsorName")
-    VALUES (1,'Google');
+    VALUES (1,'Google'),
+           (4,'Google');
     `);
 
     // insert paid course
@@ -146,7 +148,8 @@ async function seedData() {
     await pool.query(`
     INSERT INTO "StudentRegisterFreeCourse" ("studentId",
         "courseId")
-    VALUES (1,1);
+    VALUES (1,1),
+            (1,4);
     `);
 
     //insert student review course
