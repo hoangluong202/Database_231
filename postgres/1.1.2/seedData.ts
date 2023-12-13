@@ -180,7 +180,10 @@ async function seedData() {
         "name",
         "content")
     VALUES (2,'Web development category','Web development','How to become a web developer'),
-    (2,'Database category','Database','How to become a database administrator');
+    (2,'Database category','Database','How to become a database administrator'),
+    (1,'Web development category','Web development','How to become a web developer'),
+    (3,'Database category','Database','How to become a database administrator'),
+    (4,'Web development category','Web development','How to become a web developer');
     `);
 
     process.exit(0);
