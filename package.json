@@ -7,7 +7,8 @@
   "scripts": {
     "build": "tsc --project tsconfig.compile.json && tsc-alias",
     "barrels": "barrelsby --config .barrelsby.json -q",
-    "fe:start": "yarn barrels && cross-env NODE_ENV=development vite --host",
+    "start:fe": "yarn barrels && cross-env NODE_ENV=development vite --host",
+    "start:be": "yarn barrels && cross-env NODE_ENV=development tsnd --ignore-watch node_modules --respawn --transpile-only --max-old-space-size=2048 -r tsconfig-paths/register backend/index.ts",
     "db:migrate": "npx prisma migrate dev",
     "db:reset": "npx prisma migrate reset --force",
     "db:deploy": "npx prisma migrate deploy",

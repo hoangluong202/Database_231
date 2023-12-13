@@ -11,7 +11,6 @@ export const envs = cleanEnv(process.env, {
     JWT_SECRET: str(),
     COOKIE_SECRET: str(),
     CORS_WHITE_LIST: str(),
-    DISCORD_WEBHOOK_URL: str(),
     POSTGRES_HOST: str(),
     POSTGRES_USER: str(),
     POSTGRES_PASSWORD: str(),
