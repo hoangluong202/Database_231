@@ -42,7 +42,7 @@ type ReviewCreationPayload = {
 
 type FilterAndSortPayload = {
     courseLabels: string[] | null;
-    audiencelabels: string[] | null;
+    audienceLabels: string[] | null;
     sponsorName: string[] | null;
     sortColumns: string[];
     sortOrders: string[];

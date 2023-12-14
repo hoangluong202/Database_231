@@ -25,7 +25,7 @@ export function InstructorPage() {
     const [rotate, setRotate] = useState<number[]>([0, 0, 0, 0, 0]);
     const [filterAndSortPayload, setFilterAndSortPayload] = useState<FilterAndSortPayload>({
         courseLabels: null,
-        audiencelabels: null,
+        audienceLabels: null,
         sponsorName: null,
         sortColumns: ['updatedAt'],
         sortOrders: ['DESC'],
@@ -53,32 +53,30 @@ export function InstructorPage() {
         });
     };
 
-    // const handleAudienceLabels = (audienceLabel: string) => {
-    //     setFilterAndSortPayload((prevFilterAndSortPayload) => {
-    //         const idx = (prevFilterAndSortPayload.courseLabels || []).findIndex(
-    //             (item) => item === audienceLabel
-    //         );
+    const handleAudienceLabels = (audienceLabel: string) => {
+        setFilterAndSortPayload((prevFilterAndSortPayload) => {
+            const idx = (prevFilterAndSortPayload.audienceLabels || []).findIndex((item) => item === audienceLabel);
 
-    //         if (idx !== -1) {
-    //             const newCourseLabels = (prevFilterAndSortPayload.courseLabels || []).slice();
-    //             newCourseLabels.splice(idx, 1);
-    //             return {
-    //                 ...prevFilterAndSortPayload,
-    //                 courseLabels: newCourseLabels.length > 0 ? newCourseLabels : null,
-    //             };
-    //         } else {
-    //             const newCourseLabels = [...(prevFilterAndSortPayload.courseLabels || []), audienceLabel];
-    //             return {
-    //                 ...prevFilterAndSortPayload,
-    //                 courseLabels: newCourseLabels,
-    //             };
-    //         }
-    //     });
-    // };
+            if (idx !== -1) {
+                const newAudienceLabels = (prevFilterAndSortPayload.audienceLabels || []).slice();
+                newAudienceLabels.splice(idx, 1);
+                return {
+                    ...prevFilterAndSortPayload,
+                    audienceLabels: newAudienceLabels.length > 0 ? newAudienceLabels : null
+                };
+            } else {
+                const newAudienceLabels = [...(prevFilterAndSortPayload.audienceLabels || []), audienceLabel];
+                return {
+                    ...prevFilterAndSortPayload,
+                    audienceLabels: newAudienceLabels
+                };
+            }
+        });
+    };
 
     useEffect(() => {
         if (
-            filterAndSortPayload.audiencelabels === null &&
+            filterAndSortPayload.audienceLabels === null &&
             filterAndSortPayload.courseLabels === null &&
             filterAndSortPayload.sponsorName === null &&
             filterAndSortPayload.sortColumns.length === 1 &&
@@ -93,7 +91,7 @@ export function InstructorPage() {
             filterAndSortCourses(2, filterAndSortPayload);
         }
     }, [
-        filterAndSortPayload.audiencelabels,
+        filterAndSortPayload.audienceLabels,
         filterAndSortPayload.courseLabels,
         filterAndSortPayload.sponsorName,
         filterAndSortPayload.sortColumns,
@@ -237,7 +235,11 @@ export function InstructorPage() {
                                     variant='outlined'
                                     size='sm'
                                     color={AUDIENCE_LABEL_COLOR[item as AudienceLabel]}
-                                    className='rounded-full focus:ring-0 hover:bg-gray-200 w-fit'
+                                    className={
+                                        'rounded-full focus:ring-0 hover:bg-gray-200 normal-case w-fit' +
+                                        ((filterAndSortPayload.audienceLabels ?? []).includes(item) ? ' bg-teal-100' : '')
+                                    }
+                                    onClick={() => handleAudienceLabels(item)}
                                 >
                                     {item}
                                 </Button>
