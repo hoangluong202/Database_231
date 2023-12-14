@@ -337,16 +337,16 @@ Các công việc cần làm:
     #block(inset: (left: 1cm))[
         == Viết thủ tục INSERT/UPDATE/DELETE
         *Yêu cầu:*
-
         Viết các thủ tục để thêm (insert), sửa (update), xóa (delete) dữ liệu vào MỘT bảng dữ liệu.
         - Phải có thực hiện việc kiểm tra dữ liệu hợp lệ (validate) để đảm bảo các ràng buộc của bảng dữ liệu.
         - Xuất ra thông báo lỗi có nghĩa, chỉ ra được lỗi sai cụ thể (không ghi chung chung là “Lỗi nhập dữ liệu!”).
-        *Kết quả:*
-        
-        - Học sinh thêm 1 review vào khóa học mà học sinh đó đã tham gia (hoặc đăng kí) - *INSERT*
+        *Kết quả:* Có 4 thủ tục được viết trong báo cáo này.
+        #image("img/crud-review/procedures-insert-update-delete-review.png")
+        - Thủ tục 1: Học sinh thêm 1 review vào khóa học mà học sinh đó đã tham gia (hoặc đăng kí) - *INSERT*
+        - _Code thủ tục 1:_
         ```sql
         -- Insert 
-CREATE OR REPLACE FUNCTION validate_review_parameters(
+        CREATE OR REPLACE FUNCTION validate_review_parameters(
             p_student_id INTEGER,
             p_course_id INTEGER,
             p_rating INTEGER,
@@ -470,6 +470,14 @@ CREATE OR REPLACE PROCEDURE insert_review(
                 (p_student_id, p_course_id, p_rating, p_content);
         END;   
         $$ LANGUAGE plpgsql;```
+        #block(inset: (left: 1cm))[
+            Hình 1.1: Thực hiện thủ tục 1 trong DBMS. Ta chú ý tham số đầu tiên là _p_student_id_ = 1
+        ]
+        #image("img/crud-review/insert-review-exec.png")
+        #block(inset: (left: 1cm))[
+            Hình 1.2: Kết sau khi thực hiện thủ tục 1 trong DBMS như trên, _Bảng nhận xét của học sinh có id = 1 đã được cập nhật,_ dòng số 1
+        ]
+        #image("img/crud-review/insert-review-result.png")
         Mô tả:
 
         1. Hàm _*validate_review_parameters*_: Hàm này được sử dụng để kiểm tra tính hợp lệ của các tham số đầu vào cho việc thêm đánh giá của học sinh. Nếu bất kỳ tham số nào là NULL, hàm sẽ trả về một thông báo lỗi tương ứng. Nếu không có lỗi, nó sẽ trả về NULL.
@@ -484,7 +492,8 @@ CREATE OR REPLACE PROCEDURE insert_review(
 
         6. Procedure *_insert_review_*: Procedure này thực hiện việc thêm một bản đánh giá mới vào bảng "StudentReviewCourse". Trước khi thêm, nó kiểm tra tính hợp lệ của các tham số đầu vào sử dụng các hàm đã được định nghĩa ở trên. Nếu có lỗi xảy ra (ví dụ: tham số NULL, học sinh chưa đăng ký khóa học, đã đánh giá trước đó, hoặc điểm đánh giá không hợp lệ), procedure sẽ ném ra một ngoại lệ với thông báo lỗi tương ứng. Nếu không có lỗi, nó thêm dòng đánh giá mới vào bảng "StudentReviewCourse".
 
-        - Thực update 1 review - *UPDATE*
+        -Thủ tục 2: hiện thực update 1 review - *UPDATE*
+        - _Code thủ tục 2: _
         ```sql
         CREATE OR REPLACE PROCEDURE update_review(
             p_student_id INTEGER,
@@ -520,6 +529,14 @@ CREATE OR REPLACE PROCEDURE insert_review(
         END;
         $$ LANGUAGE plpgsql;
         ```
+        #block(inset: (left: 1cm))[
+         Hình 2.1: Thực hiện update 1 review của 1 học sinh, _Ta chú ý tham số đầu tiên là p_student_id_ = 1
+        ]
+        #image("img/crud-review/update-review-exec.png")
+        #block(inset: (left: 1cm))[
+        Hình 2.2: Kết sau khi thực hiện thủ tục 1 trong DBMS như trên, Bảng nhận xét của học sinh có id = 1 đã được cập nhật, dòng số 1
+        ]
+        #image("img/crud-review/update-review-result.png")
         Mô tả: 
 
         1. Procedure *_update_review_* nhận vào bốn tham số: *_p_student_id_* (ID của học sinh), *_p_course_id_* (ID của khóa học), _*p_rating*_ (điểm đánh giá mới), và _*p_content*_ (nội dung đánh giá mới).
@@ -532,7 +549,8 @@ CREATE OR REPLACE PROCEDURE insert_review(
 
         5. Cuối cùng, nếu không có lỗi nào xảy ra trong quá trình kiểm tra, procedure sẽ thực hiện cập nhật bản đánh giá trong bảng "StudentReviewCourse". Nếu *_p_rating_* hoặc _*p_content*_ là null, sẽ sử dụng giá trị hiện tại của cột tương ứng. Cập nhật sẽ được thực hiện dựa trên điều kiện "studentId" và "courseId" của bản đánh giá để đảm bảo rằng chỉ bản đánh giá của học sinh cụ thể cho khóa học cụ thể được cập nhật.
 
-        - Thực hiện xóa 1 review - *DELETE*
+        - Thủ tục 3: Thực hiện xóa 1 review - *DELETE*
+        - _Code thủ tục 3:_
         ```sql
         CREATE OR REPLACE PROCEDURE delete_review(
             p_student_id INTEGER,
@@ -559,6 +577,14 @@ CREATE OR REPLACE PROCEDURE insert_review(
         END;
         $$ LANGUAGE plpgsql;
         ```
+        #block(inset: (left: 1cm))[
+         Hình 3.1: Thực hiện xóa 1 review của 1 học sinh, _Ta chú ý tham số đầu tiên là p_student_id_ = 1 và _tham số thứ 2 p_course_id _= 4
+        ]
+        #image("img/crud-review/delete-review-exec.png")
+        #block(inset: (left: 1cm))[
+        Hình 3.2: Kết sau khi thực hiện thủ tục 1 trong DBMS như trên, Bảng nhận xét của học sinh có id = 1 đã được cập nhật, không còn đánh giá cho khóa học có id = 4.
+        ]
+        #image("img/crud-review/delete-review-result.png")
         Mô tả: 
         1. Procedure *_delete_review_* nhận vào hai tham số: _*p_student_id*_ (ID của học sinh) và *_p_course_id_* (ID của khóa học) mà bạn muốn xóa đánh giá của học sinh đó.
 
@@ -568,7 +594,8 @@ CREATE OR REPLACE PROCEDURE insert_review(
 
         4. Nếu không có lỗi nào xảy ra trong quá trình kiểm tra, procedure sẽ thực hiện lệnh DELETE để xóa bản đánh giá cụ thể trong bảng "StudentReviewCourse". Xóa sẽ được thực hiện dựa trên điều kiện "studentId" và "courseId" của bản đánh giá để đảm bảo rằng chỉ bản đánh giá của học sinh cụ thể cho khóa học cụ thể được xóa.
 
-        - Lấy review từ học sinh - *GET*
+        - Thủ tục 4: Lấy review từ học sinh - *GET*
+        - _Code thủ tục 4: _
         ```sql
         CREATE OR REPLACE FUNCTION get_review_by_student(p_student_id INTEGER) RETURNS TABLE(
                 "courseId" INTEGER,
@@ -605,6 +632,7 @@ CREATE OR REPLACE PROCEDURE insert_review(
             END;
         $$ LANGUAGE plpgsql;
         ```
+        #
         Mô tả: 
 
         1. Hàm *_get_review_by_student_* nhận một tham số là _*p_student_id*_, là ID của học sinh mà bạn muốn truy vấn đánh giá của.
