@@ -43,4 +43,4 @@
 #set par(justify: true)
 #show par: set block(spacing: 2em)
 
-#include "contents/index.typ"
+#include "contents/04_BTL2/index.typ"
