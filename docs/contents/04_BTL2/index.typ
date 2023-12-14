@@ -296,159 +296,7 @@ Các công việc cần làm:
     -- AddForeignKey
     ALTER TABLE "Answer" ADD CONSTRAINT "Answer_questionId_fkey" FOREIGN KEY ("questionId") REFERENCES "Question"("id") ON DELETE CASCADE ON UPDATE CASCADE;
     ```
-    - Tạo các trigger cho các thuộc tính dẫn xuất(2 trigger demo cho phần 1.2.2 sẽ không show ở phần này)
-    ```sql
-    -- Trigger update correct answer
-    CREATE OR REPLACE FUNCTION update_correct_answer() RETURNS TRIGGER AS $$
-        BEGIN
-        UPDATE "Question"
-        SET "correctOption" = COALESCE((SELECT "answerOption" FROM "Answer" WHERE "questionId" = NEW."questionId" AND "isCorrect" = TRUE LIMIT 1),'A')
-        WHERE id = NEW."questionId";
-        RETURN NULL;
-        END;
-        $$ LANGUAGE PLPGSQL;
-
-    CREATE OR REPLACE TRIGGER correct_answer_update AFTER
-    INSERT
-    OR
-    UPDATE OF "isCorrect" ON "Answer"
-    FOR EACH ROW EXECUTE FUNCTION update_correct_answer();
-
-    -- Trigger update duration of course
-    CREATE OR REPLACE FUNCTION update_total_course_duration() RETURNS TRIGGER AS $$
-        DECLARE
-        course_id INT;
-        BEGIN
-        IF TG_OP = 'DELETE' THEN
-            course_id := OLD."courseId";
-        ELSE
-            course_id := NEW."courseId";
-        END IF;
-
-        UPDATE "Course"
-        SET "totalDuration" = (
-            SELECT SUM("totalCompletionTime")
-            FROM "Section"
-            WHERE "courseId" = course_id
-        )
-        WHERE id = course_id;
-        RETURN NULL;
-        END;
-        $$ LANGUAGE PLPGSQL;
-
-    CREATE OR REPLACE TRIGGER total_duration_course_update AFTER
-    INSERT
-    OR
-    UPDATE OF "totalCompletionTime"
-    OR
-    DELETE ON "Section"
-    FOR EACH ROW EXECUTE FUNCTION update_total_course_duration();
-
-    -- Trigger update duration of section
-    CREATE OR REPLACE FUNCTION update_total_duration_section() RETURNS TRIGGER AS $$
-        DECLARE
-        section_id INT;
-        BEGIN
-        IF TG_OP = 'DELETE' THEN
-            section_id := OLD."sectionId";
-        ELSE
-            section_id := NEW."sectionId";
-        END IF;
-
-        UPDATE "Section"
-        SET "totalCompletionTime" = (
-            SELECT SUM("duration")
-            FROM "Lecture"
-            WHERE "sectionId" = section_id
-        )
-        WHERE id = section_id;
-        RETURN NULL;
-        END;
-        $$ LANGUAGE PLPGSQL;
-
-    CREATE OR REPLACE TRIGGER total_duration_section_update AFTER
-    INSERT
-    OR
-    UPDATE OF duration
-    OR
-    DELETE ON "Lecture"
-    FOR EACH ROW EXECUTE FUNCTION update_total_duration_section();
-
-    --Trigger update total section of course
-    CREATE OR REPLACE FUNCTION update_total_section() RETURNS TRIGGER AS $$
-        DECLARE
-        course_id INT;
-        BEGIN
-        IF TG_OP = 'DELETE' THEN
-            course_id := OLD."courseId";
-        ELSE
-            course_id := NEW."courseId";
-        END IF;
-        UPDATE "Course"
-        SET "totalSections" = (
-            SELECT COUNT(*)
-            FROM "Section"
-            WHERE "courseId" = course_id
-        )
-        WHERE id = course_id;
-        RETURN NULL;
-        END;
-        $$ LANGUAGE PLPGSQL;
-
-    CREATE OR REPLACE TRIGGER total_section_update AFTER
-    INSERT
-    OR
-    DELETE ON "Section"
-    FOR EACH ROW EXECUTE FUNCTION update_total_section();
-
-    --Trigger update total lucture of section
-    CREATE OR REPLACE FUNCTION update_total_lecture() RETURNS TRIGGER AS $$
-        DECLARE
-        section_id INT;
-        BEGIN
-        IF TG_OP = 'DELETE' THEN
-        section_id := OLD."sectionId";
-        ELSE
-        section_id := NEW."sectionId";
-        END IF;
-        UPDATE "Section"
-        SET "totalLectures" = (SELECT COUNT(*) FROM "Lecture" WHERE "sectionId" = section_id)
-        WHERE id = section_id;
-        RETURN NULL;
-        END;
-        $$ LANGUAGE PLPGSQL;
-
-    CREATE OR REPLACE TRIGGER total_lecture_update AFTER
-    INSERT
-    OR
-    DELETE ON "Lecture"
-    FOR EACH ROW EXECUTE FUNCTION update_total_lecture();
-
-    -- Trigger update total question of quiz
-    CREATE OR REPLACE FUNCTION update_total_question() RETURNS TRIGGER AS $$
-        DECLARE
-        quiz_id INT;
-        BEGIN
-
-        IF TG_OP = 'DELETE' THEN
-            quiz_id := OLD."quizId";
-        ELSE
-            quiz_id := NEW."quizId";
-        END IF;
-
-        UPDATE "Quiz"
-        SET "totalQuestions" = (SELECT COUNT(*) FROM "Question" WHERE "quizId" = quiz_id)
-        WHERE "lectureId" = quiz_id;
-        RETURN NULL;
-        END;
-        $$ LANGUAGE PLPGSQL;
-
-    CREATE OR REPLACE TRIGGER total_question_update AFTER
-    INSERT
-    OR
-    DELETE ON "Question"
-    FOR EACH ROW EXECUTE FUNCTION update_total_question();
-    ```
+    
     - Ảnh dữ liệu trong các bảng
     Bảng dữ liệu User
     #image("img/create/user.png")
@@ -759,7 +607,7 @@ CREATE OR REPLACE PROCEDURE insert_review(
         ```
         Mô tả: 
 
-        1. Hàm get_review_by_student nhận một tham số là p_student_id, là ID của học sinh mà bạn muốn truy vấn đánh giá của.
+        1. Hàm *_get_review_by_student_* nhận một tham số là _*p_student_id*_, là ID của học sinh mà bạn muốn truy vấn đánh giá của.
 
         2. Hàm trả về một bảng kết quả với các cột sau:
 
@@ -780,7 +628,400 @@ CREATE OR REPLACE PROCEDURE insert_review(
         ]
         4. Cuối cùng, hàm trả về kết quả của truy vấn dưới dạng một bảng chứa thông tin về các đánh giá của học sinh cho các khóa học tương ứng.
         == Viết trigger
+        #block(inset: (left: 1cm))[
+            - *Yêu cầu*
+            
+            Viết 2 trigger để kiểm soát các hành động INSERT, UPDATE, DELETE trên một số bảng đã tạo thỏa mãn yêu cầu sau:
+    
+            \- Có ít nhất 1 trigger có tính toán cập nhật dữ liệu trên bảng dữ liệu khác bảng đang được thiết lập trigger. (Trigger liên quan đến việc tính toán thuộc tính dẫn xuất)
+
+            \- Chuẩn bị câu lệnh và dữ liệu minh họa cho việc kiểm tra trigger khi báo cáo.
+
+            - *Kết quả*
+            _*Trigger 1: Thuộc tính dẫn xuất trong cùng một bảng*_
+            #block(inset: (left: 0.5cm))[
+                _Mô tả:_
+                - Giá của một khóa học có phí sẽ được tự động cập nhật bằng giá gốc trừ giá khuyến mãi.
+                - Trigger này sẽ được kích hoạt khi thêm mới hoặc có sự cập nhật của giá gốc hoặc phần trăm   khuyến mãi hoặc ngày hết hạn khuyến mãi của một khóa học có phí (PaidCourse)
+                - Nếu hết thời gian khuyến mãi vượt quá hạn thì tự động cập nhật tỉ lệ giảm giá là 0%
+                _Code:_
+                ```sql
+                -- Create trigger function
+                CREATE OR REPLACE FUNCTION update_paid_course_price() RETURNS TRIGGER AS $$
+                    BEGIN
+                    IF NEW."promoEndDate" IS NOT NULL AND NEW."promoEndDate" < NOW() THEN
+                        NEW."discountPercentage" := 0;
+                    END IF;
+                    NEW."priceDiscounted" := NEW."priceOriginal" * (100-NEW."discountPercentage")/100;
+                    RETURN NEW;
+                    END;
+                    $$ LANGUAGE PLPGSQL;
+
+                -- Create trigger
+                CREATE OR REPLACE TRIGGER paid_course_price_update
+                    BEFORE
+                    INSERT
+                    OR
+                    UPDATE OF "priceOriginal",
+                            "discountPercentage",
+                            "promoEndDate" ON "PaidCourse"
+                    FOR EACH ROW EXECUTE FUNCTION update_paid_course_price();
+                ```
+            ]
+            *_Trigger 2: Thuộc tính dẫn xuất khác bảng_*
+            #block(inset: (left: 0.6cm))[
+                _Mô tả:_
+                - Tổng số tiền của một đơn hàng sẽ được tự động cập nhật bằng tổng giá bản của các khóa học có phí đã được thêm vào đơn hàng
+                - Trigger này sẽ được kích hoạt khi thêm hoặc xóa một khóa học có phí khỏi một đơn hàng
+                _Code: _
+                ```sql
+                CREATE OR REPLACE FUNCTION update_total_cost() RETURNS TRIGGER AS $$
+                    DECLARE
+                    order_id INT;
+                    BEGIN
+                        IF TG_OP = 'DELETE' THEN
+                            order_id := OLD."orderId";
+                        ELSE
+                            order_id := NEW."orderId";
+                        END IF;
+
+                        UPDATE "Order" o
+                        SET "totalCost" = (
+                            SELECT COALESCE(SUM("priceDiscounted"), 0)
+                            FROM "PaidCourse" pc
+                            JOIN "PaidCourseOrder" pco ON pc."courseId" = pco."paidCourseId"
+                            WHERE pco."orderId" = order_id
+                        )
+                        WHERE o.id = order_id;
+                        RETURN NULL;
+                    END;
+                    $$ LANGUAGE PLPGSQL;
+
+                CREATE OR REPLACE TRIGGER total_cost_update AFTER
+                INSERT
+                OR
+                DELETE ON "PaidCourseOrder"
+                FOR EACH ROW EXECUTE FUNCTION update_total_cost();
+                ```
+            ]
+            _*Trigger 3->8: trigger cho các thuộc tính dẫn xuất khác*_
+            #block(inset: (left: 0.6cm))[
+                - Tạo các trigger cho các thuộc tính dẫn xuất(2 trigger demo cho phần 1.2.2 sẽ không show ở phần này)
+                _Mô tả:_
+
+                *Trigger 3 và hàm update_correct_answer:*
+                #block(inset: (left: 0.6cm))[
+                    - Trigger *correct_answer_update* được kích hoạt sau khi có sự thay đổi (INSERT hoặc UPDATE) trên bảng "Answer" và liên quan đến cột "isCorrect".
+                    - Hàm *update_correct_answer* được gọi bởi trigger này và được sử dụng để cập nhật cột "correctOption" trong bảng "Question".
+                    - Trigger này giúp đảm bảo rằng "correctOption" trong bảng "Question" sẽ luôn thể hiện câu trả lời đúng (được lấy từ bảng "Answer").
+                ]
+                
+                *Trigger 4 và hàm update_total_course_duration:    *
+                #block(inset: (left: 0.6cm))[
+                    - Trigger *total_duration_course_update* được kích hoạt sau khi có sự thay đổi (INSERT, UPDATE, hoặc DELETE) trên bảng "Section" và liên quan đến cột "totalCompletionTime".
+                    - Hàm *update_total_course_duration* được gọi bởi trigger này và được sử dụng để cập nhật cột "totalDuration" trong bảng "Course".
+                    - Trigger này cập nhật tổng thời lượng của một khóa học dựa trên tổng thời lượng các phần ("Section") trong khóa học.
+                ]
+                
+                *Trigger 5 và hàm update_total_duration_section:*
+                #block(inset: (left: 0.6cm))[
+                    - Trigger *total_duration_section_update* được kích hoạt sau khi có sự thay đổi (INSERT, UPDATE, hoặc DELETE) trên bảng "Lecture" và liên quan đến cột "duration".
+                    - Hàm *update_total_duration_section* được gọi bởi trigger này và được sử dụng để cập nhật cột "totalCompletionTime" trong bảng "Section".
+                    - Trigger này cập nhật tổng thời lượng của một phần ("Section") dựa trên tổng thời lượng các bài giảng ("Lecture") trong phần đó.
+                ]
+             
+                *Trigger 6 và hàm update_total_section:*
+                #block(inset: (left: 0.6cm))[
+                    - Trigger *total_section_update* được kích hoạt sau khi có sự thay đổi (INSERT hoặc DELETE) trên bảng "Section".
+                    - Hàm *update_total_section* được gọi bởi trigger này và được sử dụng để cập nhật cột "totalSections" trong bảng "Course".
+                    - Trigger này cập nhật tổng số các phần trong khóa học.
+                ]
+          
+                *Trigger 7 và hàm update_total_lecture:*
+                #block(inset: (left: 0.6cm))[
+                    - Trigger *total_lecture_update* được kích hoạt sau khi có sự thay đổi (INSERT hoặc DELETE) trên bảng "Lecture".
+                    - Hàm *update_total_lecture* được gọi bởi trigger này và được sử dụng để cập nhật cột "totalLectures" trong bảng "Section".
+                    - Trigger này cập nhật tổng số bài giảng trong một phần.
+                ]
+                
+                *Trigger 8 và hàm update_total_question:*
+                #block(inset: (left: 0.6cm))[
+                    Trigger *total_question_update* được kích hoạt sau khi có sự thay đổi (INSERT hoặc DELETE) trên bảng "Question".
+                    Hàm *update_total_question* được gọi bởi trigger này và được sử dụng để cập nhật cột "totalQuestions" trong bảng "Quiz".
+                    Trigger này cập nhật tổng số câu hỏi trong một bài kiểm tra ("Quiz").
+                ]
+                _Code:_
+            ```sql
+            -- Trigger update correct answer
+            CREATE OR REPLACE FUNCTION update_correct_answer() RETURNS TRIGGER AS $$
+                BEGIN
+                UPDATE "Question"
+                SET "correctOption" = COALESCE((SELECT "answerOption" FROM "Answer" WHERE "questionId" = NEW."questionId" AND "isCorrect" = TRUE LIMIT 1),'A')
+                WHERE id = NEW."questionId";
+                RETURN NULL;
+                END;
+                $$ LANGUAGE PLPGSQL;
+
+            CREATE OR REPLACE TRIGGER correct_answer_update AFTER
+            INSERT
+            OR
+            UPDATE OF "isCorrect" ON "Answer"
+            FOR EACH ROW EXECUTE FUNCTION update_correct_answer();
+
+            -- Trigger update duration of course
+            CREATE OR REPLACE FUNCTION update_total_course_duration() RETURNS TRIGGER AS $$
+                DECLARE
+                course_id INT;
+                BEGIN
+                IF TG_OP = 'DELETE' THEN
+                    course_id := OLD."courseId";
+                ELSE
+                    course_id := NEW."courseId";
+                END IF;
+
+                UPDATE "Course"
+                SET "totalDuration" = (
+                    SELECT SUM("totalCompletionTime")
+                    FROM "Section"
+                    WHERE "courseId" = course_id
+                )
+                WHERE id = course_id;
+                RETURN NULL;
+                END;
+                $$ LANGUAGE PLPGSQL;
+
+            CREATE OR REPLACE TRIGGER total_duration_course_update AFTER
+            INSERT
+            OR
+            UPDATE OF "totalCompletionTime"
+            OR
+            DELETE ON "Section"
+            FOR EACH ROW EXECUTE FUNCTION update_total_course_duration();
+
+            -- Trigger update duration of section
+            CREATE OR REPLACE FUNCTION update_total_duration_section() RETURNS TRIGGER AS $$
+                DECLARE
+                section_id INT;
+                BEGIN
+                IF TG_OP = 'DELETE' THEN
+                    section_id := OLD."sectionId";
+                ELSE
+                    section_id := NEW."sectionId";
+                END IF;
+
+                UPDATE "Section"
+                SET "totalCompletionTime" = (
+                    SELECT SUM("duration")
+                    FROM "Lecture"
+                    WHERE "sectionId" = section_id
+                )
+                WHERE id = section_id;
+                RETURN NULL;
+                END;
+                $$ LANGUAGE PLPGSQL;
+
+            CREATE OR REPLACE TRIGGER total_duration_section_update AFTER
+            INSERT
+            OR
+            UPDATE OF duration
+            OR
+            DELETE ON "Lecture"
+            FOR EACH ROW EXECUTE FUNCTION update_total_duration_section();
+
+            --Trigger update total section of course
+            CREATE OR REPLACE FUNCTION update_total_section() RETURNS TRIGGER AS $$
+                DECLARE
+                course_id INT;
+                BEGIN
+                IF TG_OP = 'DELETE' THEN
+                    course_id := OLD."courseId";
+                ELSE
+                    course_id := NEW."courseId";
+                END IF;
+                UPDATE "Course"
+                SET "totalSections" = (
+                    SELECT COUNT(*)
+                    FROM "Section"
+                    WHERE "courseId" = course_id
+                )
+                WHERE id = course_id;
+                RETURN NULL;
+                END;
+                $$ LANGUAGE PLPGSQL;
+
+            CREATE OR REPLACE TRIGGER total_section_update AFTER
+            INSERT
+            OR
+            DELETE ON "Section"
+            FOR EACH ROW EXECUTE FUNCTION update_total_section();
+
+            --Trigger update total lucture of section
+            CREATE OR REPLACE FUNCTION update_total_lecture() RETURNS TRIGGER AS $$
+                DECLARE
+                section_id INT;
+                BEGIN
+                IF TG_OP = 'DELETE' THEN
+                section_id := OLD."sectionId";
+                ELSE
+                section_id := NEW."sectionId";
+                END IF;
+                UPDATE "Section"
+                SET "totalLectures" = (SELECT COUNT(*) FROM "Lecture" WHERE "sectionId" = section_id)
+                WHERE id = section_id;
+                RETURN NULL;
+                END;
+                $$ LANGUAGE PLPGSQL;
+
+            CREATE OR REPLACE TRIGGER total_lecture_update AFTER
+            INSERT
+            OR
+            DELETE ON "Lecture"
+            FOR EACH ROW EXECUTE FUNCTION update_total_lecture();
+
+            -- Trigger update total question of quiz
+            CREATE OR REPLACE FUNCTION update_total_question() RETURNS TRIGGER AS $$
+                DECLARE
+                quiz_id INT;
+                BEGIN
+
+                IF TG_OP = 'DELETE' THEN
+                    quiz_id := OLD."quizId";
+                ELSE
+                    quiz_id := NEW."quizId";
+                END IF;
+
+                UPDATE "Quiz"
+                SET "totalQuestions" = (SELECT COUNT(*) FROM "Question" WHERE "quizId" = quiz_id)
+                WHERE "lectureId" = quiz_id;
+                RETURN NULL;
+                END;
+                $$ LANGUAGE PLPGSQL;
+
+            CREATE OR REPLACE TRIGGER total_question_update AFTER
+            INSERT
+            OR
+            DELETE ON "Question"
+            FOR EACH ROW EXECUTE FUNCTION update_total_question();
+            ```
+            ]
+
+        ]
+
+
+
+        
         == Viết hàm
+        #block(inset: (left: 0.6cm))[
+            - *Yêu cầu:*
+            Viết 2 hàm thỏa yêu cầu sau:
+            #block(inset: (left: 0.6cm))[
+                - Chứa câu lệnh IF và/hoặc LOOP để tính toán dữ liệu được lưu trữ.
+                - Chứa câu lệnh truy vấn dữ liệu, lấy dữ liệu từ câu truy vấn để kiểm tra tính toán.
+                - Có tham số đầu vào và kiểm tra tham số đầu vào.
+                - Chuẩn bị các câu lệnh và dữ liệu để minh họa việc gọi hàm khi báo cáo.
+            ]
+            
+            - *Kết quả:*
+            #block(inset: (left: 0.6cm))[
+                - *Hàm 1:* Tên khóa học có điểm rating trung bình cao nhất cùng với điểm rating đó theo từng loại đối tượng khóa học.
+                #block(inset: (left: 0.6cm))[
+                    - Input: là nhãn đối tượng người học (Beginner, Intermediate,  Expert,  AllLevels)
+                    - Output: 
+                    #block(inset: (left: 0.6cm))[
+                        - Tên khóa học mà có điểm rating cao nhất và điểm rating đó.
+                        - Exception 1: Thông báo lỗi Nhãn đối tượng người học không được NULL
+                        - Exception 2: Thông báo lỗi Nhãn đối tượng người học phải thuộc 1 trong 4 nhãn ở trên
+                        - Exception 3: Thông báo lỗi Không có khóa học nào với nhãn đối tượng trên
+                        - Exception 4: Thông báo lỗi Không có bất kì review nào ở tất cả các khóa học với nhãn đối tượng trên
+                    ]
+                    - Code: 
+                   
+                ]
+                 ```sql
+                    CREATE OR REPLACE FUNCTION get_highest_rating_course(audience_label "AudienceLabel") RETURNS TABLE("name" VARCHAR, "averageRating" NUMERIC(10, 2)) AS $$
+                        DECLARE
+                            cou RECORD;
+                            max_course_name VARCHAR;
+                            max_average_rating NUMERIC(10,2) = 0;
+                        BEGIN
+                            -- check if audience label is NULL and raise exception
+                            IF audience_label IS NULL THEN
+                                RAISE EXCEPTION 'Audience label is null!';
+                            END IF;
+
+                            -- get all courses by audience label, if not found raise exception
+                            IF NOT EXISTS (SELECT * FROM "Course" WHERE "audienceLabel" = audience_label) THEN
+                                RAISE EXCEPTION 'Course with audience label % not found!', audience_label;
+                            END IF;
+
+                            -- in StudentReviewCourse, group by courseId and calculate average rating
+                            -- add a new column "averageRating" to result
+                            FOR cou IN
+                                SELECT "Course".id , "Course".name, AVG("StudentReviewCourse"."rating")::NUMERIC(10,2) AS "averageRating"
+                                FROM "Course"
+                                JOIN "StudentReviewCourse" ON "Course".id = "StudentReviewCourse"."courseId"
+                                WHERE "Course"."audienceLabel" = audience_label
+                                GROUP BY "Course".id
+                            LOOP
+                                IF cou."averageRating" > max_average_rating THEN
+                                    max_course_name := cou.name;
+                                    max_average_rating := cou."averageRating";
+                                END IF;
+                            END LOOP;
+
+                            -- return the course with the max rating or raise an exception if not found
+                            IF max_average_rating = 0 THEN
+                                RAISE EXCEPTION 'Course with audience label % not found review!', audience_label;
+                            END IF;
+                            RETURN QUERY SELECT max_course_name, max_average_rating;
+                        END;
+                        $$ LANGUAGE PLPGSQL;
+                    ```
+                - *Hàm 2:* Tính doanh thu của các khóa học có phí đã bán được trong một năm nhất định.
+                #block(inset: (left:  0.6cm))[
+                    - Input:là năm để tính doanh thu, phải là số nguyên dương
+                    - Output: 
+                    #block(inset: (left:  0.6cm))[ 
+                        - Doanh thu của từng khóa học trong một năm
+                        - Exception1 : Thông báo lỗi Invalid input khi input NULL hoặc không phải là số.
+                    ]
+                    - Code: 
+                ]
+                ```sql
+                CREATE OR REPLACE FUNCTION get_revenue(YEAR INT) RETURNS TABLE(name VARCHAR, revenue INT) AS $$
+                    DECLARE
+                        pai_cou RECORD;
+                        total_revenue INT;
+                    BEGIN
+                        IF year IS NULL THEN
+                        RAISE EXCEPTION 'Year is null!';
+                        END IF;
+
+                        IF year < 0 THEN
+                        RAISE EXCEPTION 'Year is invalid!';
+                        END IF;
+
+                        FOR pai_cou IN
+                        SELECT "Course".id, "Course".name, "PaidCourse"."priceDiscounted"
+                        FROM "PaidCourse"
+                        LEFT JOIN "Course" ON "Course".id = "PaidCourse"."courseId"
+                        LOOP
+                        SELECT COALESCE(SUM("PaidCourse"."priceDiscounted"),0) INTO total_revenue
+                        FROM "PaidCourse"
+                        JOIN "PaidCourseOrder" ON "PaidCourseOrder"."paidCourseId" = "PaidCourse"."courseId"
+                        JOIN "Order" ON "Order".id = "PaidCourseOrder"."orderId"
+                        WHERE "PaidCourse"."courseId" = pai_cou.id AND EXTRACT(YEAR FROM "Order"."createdAt") = year;
+
+                        name := pai_cou.name;
+                        revenue := total_revenue;
+                        RETURN NEXT;
+                        END LOOP;
+                    END;
+                    $$ LANGUAGE PLPGSQL;
+                ```
+                
+            ]
+        ]
     ]
 
 
