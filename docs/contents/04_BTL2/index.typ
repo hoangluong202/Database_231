@@ -632,7 +632,10 @@ CREATE OR REPLACE PROCEDURE insert_review(
             END;
         $$ LANGUAGE plpgsql;
         ```
-        #
+        #block(inset: (left: 1cm))[
+            Hình 4.1: Thực hiện thủ tục 4 trong DBMS, kết quả trả về là một bảng gồm các đánh giá của học sinh.
+        ]
+        #image("img/crud-review/select-review-by-student.png")
         Mô tả: 
 
         1. Hàm *_get_review_by_student_* nhận một tham số là _*p_student_id*_, là ID của học sinh mà bạn muốn truy vấn đánh giá của.
@@ -666,13 +669,17 @@ CREATE OR REPLACE PROCEDURE insert_review(
             \- Chuẩn bị câu lệnh và dữ liệu minh họa cho việc kiểm tra trigger khi báo cáo.
 
             - *Kết quả*
+            #block(inset: (left: 1cm))[Các trigger mà nhóm đã hiện thực
+            #image("img/trigger/trigger-function.png", height: 20%)]
+
+            
             _*Trigger 1: Thuộc tính dẫn xuất trong cùng một bảng*_
             #block(inset: (left: 0.5cm))[
                 _Mô tả:_
                 - Giá của một khóa học có phí sẽ được tự động cập nhật bằng giá gốc trừ giá khuyến mãi.
                 - Trigger này sẽ được kích hoạt khi thêm mới hoặc có sự cập nhật của giá gốc hoặc phần trăm   khuyến mãi hoặc ngày hết hạn khuyến mãi của một khóa học có phí (PaidCourse)
                 - Nếu hết thời gian khuyến mãi vượt quá hạn thì tự động cập nhật tỉ lệ giảm giá là 0%
-                _Code:_
+                _Code trigger 1:_
                 ```sql
                 -- Create trigger function
                 CREATE OR REPLACE FUNCTION update_paid_course_price() RETURNS TRIGGER AS $$
@@ -695,13 +702,17 @@ CREATE OR REPLACE PROCEDURE insert_review(
                             "promoEndDate" ON "PaidCourse"
                     FOR EACH ROW EXECUTE FUNCTION update_paid_course_price();
                 ```
+                #block(inset: (left: 1cm))[Hình 1.1: Trước khi thực hiện trigger.]
+                #image("img/trigger/update-paid-course-price-1-paid-course.png")
+                #block(inset: (left: 1cm))[Hình 1.2: Sau khi thực hiện trigger, cập nhật phần trăm khuyến mãi.]
+                #image("img/trigger/update-paid-course-price-2-action-and-result.png")
             ]
             *_Trigger 2: Thuộc tính dẫn xuất khác bảng_*
             #block(inset: (left: 0.6cm))[
                 _Mô tả:_
                 - Tổng số tiền của một đơn hàng sẽ được tự động cập nhật bằng tổng giá bản của các khóa học có phí đã được thêm vào đơn hàng
                 - Trigger này sẽ được kích hoạt khi thêm hoặc xóa một khóa học có phí khỏi một đơn hàng
-                _Code: _
+                _Code trigger 2: _
                 ```sql
                 CREATE OR REPLACE FUNCTION update_total_cost() RETURNS TRIGGER AS $$
                     DECLARE
@@ -731,6 +742,17 @@ CREATE OR REPLACE PROCEDURE insert_review(
                 DELETE ON "PaidCourseOrder"
                 FOR EACH ROW EXECUTE FUNCTION update_total_cost();
                 ```
+                #block(inset: (left: 1cm))[Hình 2.1: Trước khi thực hiện trigger, hình bên dưới là các khóa học mà học sinh này đăng kí.]
+                #image("img/trigger/update-total-cost-1-paid-course.png")
+                #block(inset: (left: 1cm))[Hình 2.2:  Trước khi thực hiện trigger, các khóa học ở hình trên đều được lưu vào 1 bảng PaidCourseOrder có orderId = 1.]
+                #image("img/trigger/update-total-cost-2-paid-course-order.png")
+                #block(inset: (left: 1cm))[Hình 2.3: Trước khi thực hiện trigger, tổng giá tiền của Order này là 630000 cho 6 khóa học.]
+                #image("img/trigger/update-total-cost-3-order.png")
+                #block(inset: (left: 1cm))[Hình 2.4: Sau khi thực hiện trigger (xóa 2 khóa học khỏi danh sách).]
+                #image("img/trigger/update-total-cost-4-action.png")
+                #block(inset: (left: 1cm))[Hình 2.5: Sau khi thực hiện trigger, bảng Order được cập nhật lại với tổng số tiền cần trả là 210000 (tiền đã được discount của khóa học có id = 2 và 3).]
+                #image("img/trigger/update-total-cost-5-result.png")
+                
             ]
             _*Trigger 3->8: trigger cho các thuộc tính dẫn xuất khác*_
             #block(inset: (left: 0.6cm))[
@@ -937,7 +959,6 @@ CREATE OR REPLACE PROCEDURE insert_review(
 
 
 
-        
         == Viết hàm
         #block(inset: (left: 0.6cm))[
             - *Yêu cầu:*
@@ -950,6 +971,8 @@ CREATE OR REPLACE PROCEDURE insert_review(
             ]
             
             - *Kết quả:*
+            #block(inset: (left: 0.6cm))[Tất cả function mà nhóm đã hiện thực]
+            #image("img/function/function-all.png")
             #block(inset: (left: 0.6cm))[
                 - *Hàm 1:* Tên khóa học có điểm rating trung bình cao nhất cùng với điểm rating đó theo từng loại đối tượng khóa học.
                 #block(inset: (left: 0.6cm))[
@@ -962,7 +985,7 @@ CREATE OR REPLACE PROCEDURE insert_review(
                         - Exception 3: Thông báo lỗi Không có khóa học nào với nhãn đối tượng trên
                         - Exception 4: Thông báo lỗi Không có bất kì review nào ở tất cả các khóa học với nhãn đối tượng trên
                     ]
-                    - Code: 
+                    - Code hàm 1: 
                    
                 ]
                  ```sql
@@ -1005,6 +1028,8 @@ CREATE OR REPLACE PROCEDURE insert_review(
                         END;
                         $$ LANGUAGE PLPGSQL;
                     ```
+                    #block(inset: (left: 0.6cm))[Hình 1: Thực hiện hàm 1 trong DBMS]
+                    #image("img/function/get-highest-rating-course-result.png")
                 - *Hàm 2:* Tính doanh thu của các khóa học có phí đã bán được trong một năm nhất định.
                 #block(inset: (left:  0.6cm))[
                     - Input:là năm để tính doanh thu, phải là số nguyên dương
@@ -1013,7 +1038,7 @@ CREATE OR REPLACE PROCEDURE insert_review(
                         - Doanh thu của từng khóa học trong một năm
                         - Exception1 : Thông báo lỗi Invalid input khi input NULL hoặc không phải là số.
                     ]
-                    - Code: 
+                    - Code hàm 2: 
                 ]
                 ```sql
                 CREATE OR REPLACE FUNCTION get_revenue(YEAR INT) RETURNS TABLE(name VARCHAR, revenue INT) AS $$
@@ -1047,13 +1072,14 @@ CREATE OR REPLACE PROCEDURE insert_review(
                     END;
                     $$ LANGUAGE PLPGSQL;
                 ```
-                
+                #block(inset: (left: 0.6cm))[Hình 2: Thực hiện hàm 2 trong DBMS]
+                #image("img/function/get-revenue-result.png")
             ]
         ]
     ]
 
 
-
+#pagebreak()
 = Hiện thực ứng dụng
 #block(inset: (left: 1cm))[
     - *Màn hình 1:* hiển thị các khóa học mà một học sinh đã đăng kí.
@@ -1072,9 +1098,39 @@ CREATE OR REPLACE PROCEDURE insert_review(
     #image("img/ui/mh3.png")
 ]
 = Phụ lục
+#pagebreak()
 === ERD: 
 #image("img/type_and_table/ERD.png")
 
 #pagebreak()
 === Bảng phân công nhiệm vụ
-#pagebreak()
+#table(
+  columns: (auto, auto, auto),
+  [*MSSV*], [*Tên*], [*Công việc*],
+  $2013722$,
+  $"Hoàng Lương (nhóm trưởng)"$,
+  [
+    - Phụ trách backend.
+  ],
+  $2114417$,
+  $"Nguyễn Ngọc Phú"$,
+  [
+    - Phụ trách frontend.
+  ],
+  $2213994$,
+  $"Lâm Vũ"$,
+  [
+    - Viết báo cáo
+    - Hiện thực các câu lệnh SQL \
+  ],
+  $2110934$,
+  $"Nguyễn Tuấn Duy"$,
+  [
+    - Hiện thực các câu lệnh SQL \
+  ],
+  $2114939$,
+  $"Trần Minh Thuận"$,
+  [
+    - Hiện thực các câu lệnh SQL \
+  ],
+)
