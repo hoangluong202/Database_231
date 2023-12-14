@@ -1027,7 +1027,26 @@ CREATE OR REPLACE PROCEDURE insert_review(
 
 
 = Hiện thực ứng dụng
+#block(inset: (left: 1cm))[
+    - *Màn hình 1:* hiển thị các khóa học mà một học sinh đã đăng kí.
+    - _Mô tả:_ Học sinh có thể xem các khóa học mà mình đã đăng kí (thông tin bao gồm: tên, phí khóa học, mô tả) ở màn hình này, đồng thời có thể thêm nhận xét cho các khóa học chưa được nhận xét. 
+
+    #image("img/ui/mh1.png")
+
+    - *Màn hình 2:* là các đánh giá của học sinh về các khóa học mà mình đã đăng kí (khóa học miễn phí) hoặc thanh toán (khóa học có phí) thành công.
+    - _Mô tả:_ Học sinh có thể xem các review mình đã đánh giá từ trước, đồng thời cũng có thể thay đổi nội dung đánh giá hoặc xóa đánh giá đó. 
+
+    #image("img/ui/mh2.png")
+    - *Màn hình 3:* là màn hình dùng cho người dùng có vai trò là giảng viên, hiển thị các khóa học mà giảng viên đó giảng dạy. 
+
+    - _Mô tả:_ Giảng viên có thể sử dụng chức năng Lọc khóa học (sẽ lọc theo các nhãn đối tượng, nhãn khóa học)
+
+    #image("img/ui/mh3.png")
+]
 = Phụ lục
-=== ERD
+=== ERD: 
+#image("img/type_and_table/ERD.png")
+
+#pagebreak()
 === Bảng phân công nhiệm vụ
 #pagebreak()
