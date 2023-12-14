@@ -113,11 +113,7 @@ async function filterAndSortCourse() {
             pc."courseId"
         HAVING
             COALESCE(AVG(src."rating"), 0) >= COALESCE(p_min_average_rating, COALESCE(AVG(src."rating"), 0), 0)
-        ORDER BY
-            CASE
-                WHEN order_clause = '' THEN "averageRating"
-                ELSE order_clause
-            END;
+        ORDER BY order_clause;
     END;
     $$ LANGUAGE plpgsql;
     `);
