@@ -34,10 +34,10 @@
   indent: true,
 )
 
-#outline(
-  title: "Danh mục hình vẽ",
-  target: figure.where(kind: image),
-)
+// #outline(
+//   title: "Danh mục hình vẽ",
+//   target: figure.where(kind: image),
+// )
 
 #pagebreak()
 #set par(justify: true)
