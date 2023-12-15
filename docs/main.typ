@@ -34,13 +34,13 @@
   indent: true,
 )
 
-#outline(
-  title: "Danh mục hình vẽ",
-  target: figure.where(kind: image),
-)
+// #outline(
+//   title: "Danh mục hình vẽ",
+//   target: figure.where(kind: image),
+// )
 
 #pagebreak()
 #set par(justify: true)
 #show par: set block(spacing: 2em)
 
-#include "contents/index.typ"
+#include "contents/04_BTL2/index.typ"

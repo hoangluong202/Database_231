@@ -1,9 +1,9 @@
 #let meta = (
   course-name: "Hệ cơ sở dữ liệu",
   course-id: "CO2014",
-  title: "Nền tảng dạy học trực tuyến",
+  title: "Nền tảng dạy học trực tuyến - BTL2",
   semester: 231,
-  date: "10/2023",
+  date: "12/2023",
   students: (
     "2013722": "Hoàng Lương",
     "2213994": "Lâm Vũ",
